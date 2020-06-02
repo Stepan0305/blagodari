@@ -1,5 +1,11 @@
 package com.example.blagodari.Models;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+
+import java.io.ByteArrayOutputStream;
+
 public class User {
     private int id;
     private String firstName;
@@ -7,6 +13,7 @@ public class User {
     private String password;
     private String email;
     private long date_created;
+    private String avatar;
 
     public User(int id, String firstName, String surname, String password, String email, long date_created) {
         this.id = id;
@@ -25,6 +32,42 @@ public class User {
         this.date_created = date_created;
     }
 
+    public User(int id, String firstName, String surname, String password, String email, long date_created, String avatar) {
+        this.id = id;
+        this.firstName = firstName;
+        this.surname = surname;
+        this.password = password;
+        this.email = email;
+        this.date_created = date_created;
+        this.avatar = avatar;
+    }
+
+    public User(String firstName, String surname, String password, String email, long date_created, String avatar) {
+        this.firstName = firstName;
+        this.surname = surname;
+        this.password = password;
+        this.email = email;
+        this.date_created = date_created;
+        this.avatar = avatar;
+    }
+    public User(int id, String firstName, String surname, String password, String email, long date_created, Bitmap avatar) {
+        this.id = id;
+        this.firstName = firstName;
+        this.surname = surname;
+        this.password = password;
+        this.email = email;
+        this.date_created = date_created;
+        this.avatar = bitmapToString(avatar);
+    }
+
+    public User(String firstName, String surname, String password, String email, long date_created, Bitmap avatar) {
+        this.firstName = firstName;
+        this.surname = surname;
+        this.password = password;
+        this.email = email;
+        this.date_created = date_created;
+        this.avatar = bitmapToString(avatar);
+    }
     public int getId() {
         return id;
     }
@@ -33,39 +76,44 @@ public class User {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
     public String getSurname() {
         return surname;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public long getDate_created() {
         return date_created;
     }
 
-    public void setDate_created(long date_created) {
-        this.date_created = date_created;
+    public String getAvatarAsString() {
+        return avatar;
+    }
+    public Bitmap getAvatar(){
+        return stringToBitmap(avatar);
+    }
+    public static String bitmapToString(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+        return Base64.encodeToString(b, Base64.DEFAULT);
+    }
+
+    public static Bitmap stringToBitmap(String encodedString) {
+        try {
+            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+        } catch (Exception e) {
+            e.getMessage();
+            return null;
+        }
     }
 }

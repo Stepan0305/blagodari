@@ -16,7 +16,7 @@ import java.util.Calendar;
 public class DBhelper extends SQLiteOpenHelper {
     //дб
     public static final String DATABASE_NAME = "Blagodari_database";
-    public static final int DATABASE_VERSION = 14;
+    public static final int DATABASE_VERSION = 15;
     //юзеры
     public static final String TABLE_USERS = "Users";
     public static final String KEY_ID_USERS = "_id";
@@ -25,7 +25,7 @@ public class DBhelper extends SQLiteOpenHelper {
     public static final String USER_PASSWORD = "Password";
     public static final String USER_EMAIL = "Email";
     public static final String USER_ACCOUNT_DATE_CREATED = "CreatedTime";
-    public static final String USER_AVATAR="Avatar";
+    public static final String USER_AVATAR = "Avatar";
     //запросы
     public static final String TABLE_REQUESTS = "Requests";
     public static final String KEY_ID_REQUESTS = "_id";
@@ -60,12 +60,12 @@ public class DBhelper extends SQLiteOpenHelper {
     public static final String MESSAGE_TEXT = "MessageText";
     public static final String MESSAGE_TIME_CREATED = "TimeCreated";
     //лайки
-    public static final String TABLE_LIKES="Likes";
-    public static final String LIKE_FROM="LikeFrom";
-    public static final String LIKE_TO="LikeTo";
+    public static final String TABLE_LIKES = "Likes";
+    public static final String LIKE_FROM = "LikeFrom";
+    public static final String LIKE_TO = "LikeTo";
 
     public static final String LOGGED_USER_ID = "UserLogged"; //для shared preferences
-    public static final int ADMIN_ID=3;
+    public static final int ADMIN_ID = 3;
     private User CurrentUser;
     ContentValues contentValues = new ContentValues();
     Context context;
@@ -79,7 +79,7 @@ public class DBhelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String user_sql = "Create table " + TABLE_USERS + " ( " + KEY_ID_USERS + " integer primary key, " + USER_NAME +
                 " nvarchar(128), " + USER_SURNAME + " nvarchar(128), " + USER_PASSWORD + " varchar(50), " +
-                USER_EMAIL + " varchar(128), " + USER_ACCOUNT_DATE_CREATED + " integer, "+USER_AVATAR+" longtext) ";
+                USER_EMAIL + " varchar(128), " + USER_ACCOUNT_DATE_CREATED + " integer, " + USER_AVATAR + " longtext) ";
         db.execSQL(user_sql);
         String request_sql = "Create table " + TABLE_REQUESTS + " (" + KEY_ID_REQUESTS + " integer primary key, " +
                 REQUEST_USER_CREATED_ID + " integer, " +
@@ -101,6 +101,10 @@ public class DBhelper extends SQLiteOpenHelper {
                 MESSAGE_TEXT + " text, " + MESSAGE_TIME_CREATED + " integer, foreign key ( " + MESSAGES_CHAT_ID + " ) references " +
                 TABLE_CHATS + " ( " + KEY_ID_CHATS + " ))";
         db.execSQL(sql);
+        sql = "create table " + TABLE_LIKES + " ( " + LIKE_FROM + " integer, " + LIKE_TO + " integer, foreign key ( "+
+        LIKE_FROM+" ) references "+TABLE_USERS+" ( "+KEY_ID_USERS+" ),  foreign key ( "+LIKE_TO+
+                " )  references "+TABLE_USERS+" ( "+KEY_ID_USERS+" ) )";
+        db.execSQL(sql);
         //прописать тут создание каждой таблицы
     }
 
@@ -116,7 +120,12 @@ public class DBhelper extends SQLiteOpenHelper {
                     TABLE_CHATS + " ( " + KEY_ID_CHATS + " ))";
             db.execSQL(sql);
         } else if (newVersion == 15) {
-            String sql=""
+            String sql = "alter table " + TABLE_USERS + " add column " + USER_AVATAR + " longtext";
+            db.execSQL(sql);
+            sql = "create table " + TABLE_LIKES + " ( " + LIKE_FROM + " integer, " + LIKE_TO + " integer, foreign key ( "+
+                    LIKE_FROM+" ) references "+TABLE_USERS+" ( "+KEY_ID_USERS+" ),  foreign key ( "+LIKE_TO+
+                    " )  references "+TABLE_USERS+" ( "+KEY_ID_USERS+" ) )";
+            db.execSQL(sql);
         }
     }
 
@@ -131,7 +140,8 @@ public class DBhelper extends SQLiteOpenHelper {
             String password = cursor.getString(cursor.getColumnIndex(USER_PASSWORD));
             String email = cursor.getString(cursor.getColumnIndex(USER_EMAIL));
             long createdtime = cursor.getLong(cursor.getColumnIndex(USER_ACCOUNT_DATE_CREATED));
-            User user = new User(userid, name, surname, password, email, createdtime);
+            String avatar = cursor.getString(cursor.getColumnIndex(USER_AVATAR));
+            User user = new User(userid, name, surname, password, email, createdtime, avatar);
             return user;
         }
         return null;
@@ -147,7 +157,8 @@ public class DBhelper extends SQLiteOpenHelper {
             String name = cursor.getString(cursor.getColumnIndex(USER_NAME));
             String surname = cursor.getString(cursor.getColumnIndex(USER_SURNAME));
             long createdtime = cursor.getLong(cursor.getColumnIndex(USER_ACCOUNT_DATE_CREATED));
-            User user = new User(userid, name, surname, password, email, createdtime);
+            String avatar = cursor.getString(cursor.getColumnIndex(USER_AVATAR));
+            User user = new User(userid, name, surname, password, email, createdtime, avatar);
             return user;
         }
         return null;
@@ -160,11 +171,13 @@ public class DBhelper extends SQLiteOpenHelper {
         String passwd = user.getPassword();
         String email = user.getEmail().toLowerCase();
         long date = user.getDate_created();
+        String avatar = user.getAvatarAsString();
         contentValues.put(USER_NAME, name);
         contentValues.put(USER_SURNAME, surname);
         contentValues.put(USER_PASSWORD, passwd);
         contentValues.put(USER_EMAIL, email);
         contentValues.put(USER_ACCOUNT_DATE_CREATED, date);
+        contentValues.put(USER_AVATAR, avatar);
         database.insert(TABLE_USERS, null, contentValues);
         contentValues.clear();
     }
@@ -172,7 +185,7 @@ public class DBhelper extends SQLiteOpenHelper {
     public void setCurrentUser(User user) {
         SharedPreferences pref = this.context.getSharedPreferences(LOGGED_USER_ID, 0);
         SharedPreferences.Editor editor = pref.edit();
-        User user1 = getUserByEmailAndPassword(user.getEmail(), user.getPassword());
+        User user1 = getUserByEmailAndPassword(user.getEmail(), user.getPassword());//дополнительная проверка, что юзер действительно существует
         if (user != null) {
             editor.putInt(LOGGED_USER_ID, user1.getId());
         } else {
@@ -307,7 +320,8 @@ public class DBhelper extends SQLiteOpenHelper {
         database.insert(TABLE_NEWS, null, contentValues);
         contentValues.clear();
     }
-//тут
+
+    //тут
     public News getNewsById(int id) {
         SQLiteDatabase database = getReadableDatabase();
         String sql = "select * from " + TABLE_NEWS + " where " + KEY_ID_NEWS + "=" + id;
@@ -396,7 +410,7 @@ public class DBhelper extends SQLiteOpenHelper {
     public void deleteFromHistory(History history) {
         SQLiteDatabase database = getWritableDatabase();
         int id = history.getUser_opened().getId();
-        String sql = "delete from " + TABLE_HISTORY + " where " +HISTORY_USER_CREATED_ID+ "=" + id;
+        String sql = "delete from " + TABLE_HISTORY + " where " + HISTORY_USER_CREATED_ID + "=" + id;
         database.execSQL(sql);
     }
 
@@ -500,6 +514,40 @@ public class DBhelper extends SQLiteOpenHelper {
         String sql = "insert into " + TABLE_MESSAGES + " ( " + MESSAGES_CHAT_ID + ", " + MESSAGE_FROM + ", " + MESSAGE_TO +
                 ", " + MESSAGE_TEXT + ", " + MESSAGE_TIME_CREATED + ") values ( " + chatId + ", " + uFromId + ", " +
                 uToId + ", '" + text + "', " + time + " )";
+        database.execSQL(sql);
+    }
+
+    public boolean checkIfAlreadyLiked(User from, User to) {
+        SQLiteDatabase database = getReadableDatabase();
+        int fromId=from.getId();
+        int toId=to.getId();
+        String sql="select * from "+TABLE_LIKES+" where "+LIKE_FROM+"="+fromId+" and "+LIKE_TO+"="+toId;
+        Cursor c=database.rawQuery(sql, null);
+        return c.moveToFirst();
+    }
+    public int likeCount(User user){
+        SQLiteDatabase database = getReadableDatabase();
+        int userId=user.getId();
+        String sql="select count(*) from "+TABLE_LIKES+" where "+LIKE_TO+"="+userId;
+        Cursor c=database.rawQuery(sql, null);
+        if (c.moveToFirst()){
+            return c.getInt(0);
+        }
+        return -1;
+    }
+    public void addLike(User from, User to){
+        SQLiteDatabase database=getWritableDatabase();
+        int fromId=from.getId();
+        int toId=to.getId();
+        String sql="insert into "+TABLE_LIKES+" ( "+LIKE_FROM+", "+LIKE_TO+" ) values ( "+fromId+", "+
+                toId+" )";
+        database.execSQL(sql);
+    }
+    public void deleteLike(User from, User to){
+        SQLiteDatabase database=getWritableDatabase();
+        int fromId=from.getId();
+        int toId=to.getId();
+        String sql="delete from "+TABLE_LIKES+" where "+LIKE_FROM+"="+fromId+" and "+LIKE_TO+"="+toId;
         database.execSQL(sql);
     }
 }
