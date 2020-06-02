@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AddNewsActivity">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:onClick="onAddNews"
+                android:id="@+id/imgOnAddNews"
+                android:layout_width="match_parent"
+                android:layout_height="227.2dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/addphoto" />
+
+            <EditText
+                android:onClick="onAddNews"
+                android:id="@+id/inputTitleOnAddNews"
+                android:layout_width="match_parent"
+                android:layout_height="89dp"
+                android:gravity="center"
+                android:maxLines="1"
+                android:hint="Заголовок, не более 77 символов"
+                android:textColorHint="@color/lightBlueForHints"
+                android:textColor="@color/lightBlue"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:onClick="onAddNews"
+                android:id="@+id/inputTextOnAddNews"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="27dp"
+                android:paddingEnd="25dp"
+                android:hint="@string/hintAddScreen"
+                android:textSize="16sp" />
+           <!-- <ImageView
+                android:id="@+id/whiteStripOnAddNews"
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:src="@drawable/whiterect"/>-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="62dp"
+                android:background="@color/superLightGrey"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1">
+
+
+                <Button
+                    android:onClick="onAddNews"
+                    android:id="@+id/btnSaveOnAddNews"
+                    android:layout_width="170dp"
+                    android:layout_height="38dp"
+                    android:background="@drawable/buttons"
+                    android:fontFamily="@font/tchoitalic"
+                    android:text="Сохранить"
+                    android:textAllCaps="false"
+                    android:textColor="@color/Wh"
+                    android:textSize="19sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.5" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+    <ImageButton
+        android:onClick="onAddNews"
+        android:id="@+id/btnBackOnAddNews"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:background="@color/unvisible"
+        android:src="@drawable/back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.03" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

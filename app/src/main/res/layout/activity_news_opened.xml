@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NewsOpenedActivity">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imgOnNewsOpened"
+                android:layout_width="match_parent"
+                android:layout_height="227.2dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/addphoto" />
+
+            <TextView
+                android:id="@+id/txtTitleOnNewsOpened"
+                android:layout_width="match_parent"
+                android:layout_height="89dp"
+                android:gravity="center"
+                android:text="Тестовый текст запроса кек лол"
+                android:textColor="@color/lightBlue"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtTextOnNewsOpened"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="27dp"
+                android:paddingEnd="25dp"
+                android:text="Паттерн Material Design рекомендует использовать текст динамического
+                 типа вместо маленького размера текста или обрезания текста большого размера. Android упрощает работу с текстом, реализовывая изменения размера TextView."
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:paddingTop="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/icontime"
+                    android:paddingStart="30dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintVertical_bias="0.2"
+                    app:layout_constraintHorizontal_bias="0.049" />
+
+                <TextView
+                    android:id="@+id/txtDateOnNewsOpened"
+                    android:layout_width="wrap_content"
+                    android:layout_height="18dp"
+                    android:paddingStart="12dp"
+                    android:paddingBottom="3dp"
+                    android:text="26.04.1986"
+                    android:gravity="center|start"
+                    android:textSize="11sp"
+                    android:textColor="@color/lightBlue"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.15"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.19" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <ImageButton
+        android:id="@+id/btnBackOnNewsOpened"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:onClick="back"
+        android:background="@color/unvisible"
+        android:src="@drawable/back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.03" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

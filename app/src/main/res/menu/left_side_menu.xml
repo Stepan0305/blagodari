@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<item android:id="@+id/btnHistory"
+    android:icon="@drawable/ic_access_time_black_24dp"
+    android:title="История"/>
+    <item android:id="@+id/btnShare"
+        android:icon="@drawable/ic_share_black_24dp"
+        android:title="Поделиться"/>
+    <item android:id="@+id/btnAbout"
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="О разработчике"/>
+    <item android:id="@+id/btnExit"
+        android:icon="@drawable/ic_exit_to_app_black_24dp"
+        android:title="Выход"/>
+</menu>

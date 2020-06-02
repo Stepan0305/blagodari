@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="orange">#FF6F00</color>
+    <color name="orangeMenu">#FFA801</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="red">#FF0000</color>
+    <color name="purple">#B30E99</color>
+    <color name="darkPurple">#7509B3</color>
+    <color name="lightPurple">#99B30E99</color>
+    <color name="lightBlue">#2699FB</color>
+    <color name="lightBlueForHints">#802699FB</color>
+    <color name="grey">#8C8C8C</color>
+    <color name="lightGrey">#F1F1F1</color>
+    <color name="superLightGrey">#FAFAFA</color>
+    <color name="darkBlue">#4E5DE1</color>
+    <color name="superLightBlue">#D2FFFB</color>
+    <color name="Wh">#FCFFFFFF</color>
+    <color name="unpressedBottomMenuButton">#80000000</color>
+    <color name="black">#000000</color>
+    <color name="unvisible">#00F55555</color>
+</resources>

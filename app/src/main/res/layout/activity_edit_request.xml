@@ -1,0 +1,110 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditRequestActivity">
+
+
+    <ScrollView
+        android:id="@+id/scrollView3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:onClick="confirm"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imgOnRequestEdit"
+                android:layout_width="match_parent"
+                android:layout_height="227.2dp"
+                android:onClick="confirm"
+                android:scaleType="centerCrop"
+                android:src="@drawable/addphoto" />
+
+            <EditText
+                android:id="@+id/txtRequestTitleEdit"
+                android:layout_width="match_parent"
+                android:layout_height="89dp"
+                android:gravity="center"
+                android:text="Тестовый текст запроса кек лол"
+                android:textColor="@color/lightBlue"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/txtTextOfRequestEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="27dp"
+                android:paddingEnd="25dp"
+                android:text="Паттерн Material Design рекомендует использовать текст динамического
+                 типа вместо маленького размера текста или обрезания текста больш
+                 ого размера. Android упрощает работу с текстом, реализовывая изменения размера TextView."
+                android:textSize="16sp" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:src="@drawable/whiterect"/>
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+    <ImageButton
+        android:id="@+id/btnBackOnRequestEdit"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:background="@color/unvisible"
+        android:onClick="confirm"
+        android:src="@drawable/back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.03" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="62dp"
+        android:background="@color/Wh"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1">
+
+
+        <Button
+            android:id="@+id/btnConfirm"
+            android:layout_width="170dp"
+            android:layout_height="38dp"
+            android:background="@drawable/buttons"
+
+            android:fontFamily="@font/tchoitalic"
+            android:onClick="confirm"
+            android:text="Сохранить"
+            android:textAllCaps="false"
+            android:textColor="@color/Wh"
+            android:textSize="19sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

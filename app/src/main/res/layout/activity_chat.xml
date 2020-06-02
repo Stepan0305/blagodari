@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/superLightBlue"
+    tools:context=".ChatActivity">
+
+    <FrameLayout
+        android:id="@+id/frameTop"
+        android:layout_width="match_parent"
+        android:layout_height="80dp">
+
+        <ImageButton
+            android:onClick="onChatClick"
+            android:id="@+id/btnBackOnChat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|start"
+            android:background="@color/unvisible"
+            android:paddingStart="25dp"
+            android:src="@drawable/back" />
+
+        <ImageButton
+            android:onClick="onChatClick"
+            android:id="@+id/btnRefreshOnChat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|end"
+            android:background="@color/unvisible"
+            android:paddingEnd="25dp"
+            android:src="@drawable/btnrefresh" />
+
+        <TextView
+            android:id="@+id/txtNameOnChat"
+            android:layout_width="242dp"
+            android:layout_height="26dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Абылмамбет Кызымбеккаримов"
+            android:textColor="@color/darkBlue"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/frameBottom"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        >
+       <LinearLayout
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           app:layout_constraintBottom_toBottomOf="parent"
+           app:layout_constraintEnd_toEndOf="parent"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintTop_toTopOf="parent"
+           app:layout_constraintVertical_bias="0.5"
+           app:layout_constraintHorizontal_bias="0.5"
+           >
+        <EditText
+            android:id="@+id/inputMessageOnChat"
+            android:layout_width="280dp"
+            android:layout_height="50dp"
+            android:background="@drawable/input_style"
+            android:hint="Введите ваше сообщение..."
+            android:paddingStart="20dp"
+            android:textSize="14sp"
+            />
+
+        <ImageButton
+            android:onClick="onChatClick"
+            android:id="@+id/btnSendOnChat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/unvisible"
+            android:src="@drawable/send"
+            android:paddingStart="10dp"
+            />
+       </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="571dp"
+        android:layout_above="@+id/frameBottom"
+        android:layout_below="@+id/frameTop">
+
+        <androidx.recyclerview.widget.RecyclerView
+
+            android:id="@+id/recyclerViewChat"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </FrameLayout>
+
+</RelativeLayout>
