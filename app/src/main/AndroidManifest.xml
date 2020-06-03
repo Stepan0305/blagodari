@@ -9,7 +9,8 @@
         android:roundIcon="@drawable/newlogo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AllUserChatsActivity"></activity>
+        <activity android:name=".AddAvatar"/>
+        <activity android:name=".AllUserChatsActivity" />
         <activity android:name=".ChatActivity" />
         <activity android:name=".AboutUs" />
         <activity android:name=".HistoryActivity" />

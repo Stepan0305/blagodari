@@ -57,11 +57,17 @@ public class AddNewRequestActivity extends AppCompatActivity {
                     photo.setImageResource(R.drawable.nophoto);
                 }
                 Bitmap bitmap = ((BitmapDrawable) photo.getDrawable()).getBitmap();
+                Bitmap bitmapSmall;
+                if (bitmap.getByteCount()>350000){
+                    bitmapSmall=Request.resizeBitmap(bitmap);
+                } else{
+                    bitmapSmall=bitmap;
+                }
                 String strtitle = title.getText().toString();
                 String strtext = text.getText().toString();
                 User user = dBhelper.getCurrentUser();
                 long time = System.currentTimeMillis() / 1000;
-                Request request = new Request(user, strtitle, strtext, bitmap, time);
+                Request request = new Request(user, strtitle, strtext, bitmapSmall, time);
                 dBhelper.addRequest(request);
                 Toast toast = Toast.makeText(this, "Запрос добавлен", Toast.LENGTH_LONG);
                 toast.show();
@@ -76,7 +82,9 @@ public class AddNewRequestActivity extends AppCompatActivity {
             finish();
         }
     }
-
+/**
+ * метод для получения фотографии из галереи
+ * */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

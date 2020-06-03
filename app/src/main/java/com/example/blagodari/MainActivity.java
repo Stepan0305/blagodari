@@ -41,12 +41,17 @@ public class MainActivity extends AppCompatActivity {
                 Toast toast = Toast.makeText(this, "Данныe введены некорректно", Toast.LENGTH_LONG);
                 toast.show();
             } else{
-                DBhelper db = new DBhelper(this);
+               // DBhelper db = new DBhelper(this);
                 long time = System.currentTimeMillis() / 1000;
-                User user = new User(name.getText().toString(), surname.getText().toString()+"", password.getText().toString()
+               /* User user = new User(name.getText().toString(), surname.getText().toString()+"", password.getText().toString()
                         , email.getText().toString(), time);
-                db.addUser(user);
-                Intent intent = new Intent(this, LoginActivity.class);
+               db.addUser(user);*/
+                Intent intent = new Intent(this, AddAvatar.class);
+                intent.putExtra("name", name.getText().toString());
+                intent.putExtra("surname", surname.getText().toString());
+                intent.putExtra("passwd",password.getText().toString());
+                intent.putExtra("email", email.getText().toString());
+                intent.putExtra("time", time);
                 startActivity(intent);
             }
         }

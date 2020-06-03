@@ -2,6 +2,7 @@ package com.example.blagodari.Models;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
@@ -115,5 +116,24 @@ public class User {
             e.getMessage();
             return null;
         }
+    }
+    public static Bitmap resizeBitmap(Bitmap bitmap) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        float prefWidth=width;
+        float prefHeight=height;
+        while (prefHeight+prefWidth>500){
+            prefHeight=prefHeight/1.5f;
+            prefWidth=prefWidth/1.5f;
+        }
+        float scaleWidth = prefWidth / width;
+        float scaleHeight = prefHeight / height;
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bitmap, 0, 0, width, height, matrix, false);
+        bitmap.recycle();
+        return resizedBitmap;
     }
 }

@@ -8,8 +8,6 @@ import android.util.Base64;
 import java.io.ByteArrayOutputStream;
 
 public class Request {
-    private static final float PREFERRED_WIDTH = 250;
-    private static final float PREFERRED_HEIGHT = 250;
     private int id;
     private User user;
     private String title;
@@ -112,8 +110,14 @@ public class Request {
     public static Bitmap resizeBitmap(Bitmap bitmap) {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
-        float scaleWidth = PREFERRED_WIDTH / width;
-        float scaleHeight = PREFERRED_HEIGHT / height;
+        float prefWidth=width;
+        float prefHeight=height;
+        while (prefHeight+prefWidth>800){
+            prefHeight=prefHeight/1.5f;
+            prefWidth=prefWidth/1.5f;
+        }
+        float scaleWidth = prefWidth / width;
+        float scaleHeight = prefHeight / height;
 
         Matrix matrix = new Matrix();
         matrix.postScale(scaleWidth, scaleHeight);

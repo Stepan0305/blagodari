@@ -120,7 +120,7 @@
         android:background="@drawable/buttons"
         android:onClick="Tap1"
         android:fontFamily="@font/tchoitalic"
-        android:text="Зарегистристрироваться"
+        android:text="Далее"
         android:textAllCaps="false"
         android:textColor="@color/Wh"
         android:textSize="24sp"

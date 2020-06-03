@@ -63,10 +63,16 @@ public class AddNewsActivity extends AppCompatActivity {
                     photo.setImageResource(R.drawable.nophoto);
                 }
                 Bitmap bitmap = ((BitmapDrawable) photo.getDrawable()).getBitmap();
+                Bitmap bitmapSmall;
+                if (bitmap.getByteCount()>350000){
+                    bitmapSmall=Request.resizeBitmap(bitmap);
+                } else{
+                    bitmapSmall=bitmap;
+                }
                 String strtitle = title.getText().toString();
                 String strtext = text.getText().toString();
                 long time = System.currentTimeMillis() / 1000;
-                News news=new News(strtitle, strtext, bitmap, time);
+                News news=new News(strtitle, strtext, bitmapSmall, time);
                 dBhelper.addNews(news);
                 Toast toast = Toast.makeText(this, "Новость добавлена", Toast.LENGTH_LONG);
                 toast.show();

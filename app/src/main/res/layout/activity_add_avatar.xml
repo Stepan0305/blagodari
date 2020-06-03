@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context=".AddAvatar">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:text="Последний шаг.\n Добавьте фотографию профиля"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.195"
+        android:fontFamily="@font/tchoitalic"
+        android:gravity="center"
+        android:textColor="@color/lightBlue"
+        android:textSize="27sp"/>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/view2"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_centerHorizontal="true"
+        app:cardCornerRadius="90dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imgAddAvatar"
+            android:onClick="finishSignUp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/avatar" />
+    </androidx.cardview.widget.CardView>
+<Button
+    android:id="@+id/btnFinishSignUp"
+    android:layout_width="328.32dp"
+    android:layout_height="49dp"
+    android:onClick="finishSignUp"
+    android:layout_marginTop="300dp"
+    android:background="@drawable/buttons"
+    android:fontFamily="@font/tchoitalic"
+    android:text="Зарегистристрироваться"
+    android:textAllCaps="false"
+    android:textColor="@color/Wh"
+    android:textSize="24sp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.506"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0.606"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

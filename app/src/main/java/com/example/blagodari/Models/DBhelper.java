@@ -347,7 +347,7 @@ public class DBhelper extends SQLiteOpenHelper {
             int id = c.getInt(c.getColumnIndex(KEY_ID_NEWS));
             String title = c.getString(c.getColumnIndex(NEWS_TITLE));
             int index = c.getColumnIndex(NEWS_TEXT.toLowerCase());
-            String text = c.getString(c.getColumnIndex(NEWS_TEXT));//а тут только в 1 месте
+            String text = c.getString(2);//а тут только в 1 месте
             String photo = c.getString(c.getColumnIndex(NEWS_PHOTO));
             long time = c.getLong(c.getColumnIndex(NEWS_TIME_CREATED));
             News n = new News(id, title, text, photo, time);
