@@ -47,36 +47,40 @@ public class AddAvatar extends AppCompatActivity {
             gallery.setType("image/*");
             gallery.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(gallery, "Select picture"), PICK_IMG);
-        } else if (v.getId()==signUp.getId()){
-            if (photoBitmap==null){
-                avatar.setImageResource(R.drawable.nophoto);
+        } else if (v.getId() == signUp.getId()) {
+            if (photoBitmap == null) {
+                avatar.setImageDrawable(null);
             }
-            Bitmap bitmap = ((BitmapDrawable) avatar.getDrawable()).getBitmap();
-            Bitmap bitmapSmall;
-            if (bitmap.getByteCount()>250000){
-                bitmapSmall=User.resizeBitmap(bitmap);
-            } else{
-                bitmapSmall=bitmap;
+            User u;
+            if (avatar.getDrawable() != null) {
+                Bitmap bitmap = ((BitmapDrawable) avatar.getDrawable()).getBitmap();
+                Bitmap bitmapSmall;
+                if (bitmap.getByteCount() > 250000) {
+                    bitmapSmall = User.resizeBitmap(bitmap);
+                } else {
+                    bitmapSmall = bitmap;
+                }
+                 u = new User(name, surname, passwd, email, time, bitmapSmall);
+            } else {
+                u=new User(name, surname, passwd, email, time);
             }
-            User u=new User(name, surname, passwd, email, time, bitmapSmall);
-            DBhelper dBhelper=new DBhelper(this);
-            System.out.println(bitmap.getByteCount());
-            System.out.println(bitmapSmall.getByteCount());
+            DBhelper dBhelper = new DBhelper(this);
             dBhelper.addUser(u);
-            Intent i=new Intent(this, LoginActivity.class);
+            Intent i = new Intent(this, LoginActivity.class);
             startActivity(i);
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==PICK_IMG && resultCode==RESULT_OK){
-            imageUri=data.getData(); //получить uri
+        if (requestCode == PICK_IMG && resultCode == RESULT_OK) {
+            imageUri = data.getData(); //получить uri
             try {
-                Bitmap bitmap= MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                 avatar.setImageBitmap(bitmap);
-                photoBitmap=bitmap;
-            } catch (IOException e){
+                photoBitmap = bitmap;
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

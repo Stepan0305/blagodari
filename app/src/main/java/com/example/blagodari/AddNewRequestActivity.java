@@ -33,6 +33,7 @@ public class AddNewRequestActivity extends AppCompatActivity {
     Uri imageUri;
     Bitmap photoBitmap;
     ConstraintLayout constraintLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +43,7 @@ public class AddNewRequestActivity extends AppCompatActivity {
         text = findViewById(R.id.txtTextOfRequestAdd);
         save = findViewById(R.id.btnConfirmAdd);
         back = findViewById(R.id.btnBackOnRequestAdd);
-        constraintLayout=findViewById(R.id.constraintOnNewRequest);
+        constraintLayout = findViewById(R.id.constraintOnNewRequest);
         dBhelper = new DBhelper(this);
     }
 
@@ -53,48 +54,54 @@ public class AddNewRequestActivity extends AppCompatActivity {
                 Toast toast = Toast.makeText(this, "Некорректно введены данные", Toast.LENGTH_LONG);
                 toast.show();
             } else {
-                if (photoBitmap==null){
-                    photo.setImageResource(R.drawable.nophoto);
+                if (photoBitmap == null) {
+                    photo.setImageDrawable(null);
                 }
-                Bitmap bitmap = ((BitmapDrawable) photo.getDrawable()).getBitmap();
-                Bitmap bitmapSmall;
-                if (bitmap.getByteCount()>350000){
-                    bitmapSmall=Request.resizeBitmap(bitmap);
-                } else{
-                    bitmapSmall=bitmap;
-                }
+                Request request;
                 String strtitle = title.getText().toString();
                 String strtext = text.getText().toString();
                 User user = dBhelper.getCurrentUser();
                 long time = System.currentTimeMillis() / 1000;
-                Request request = new Request(user, strtitle, strtext, bitmapSmall, time);
+                if (photo.getDrawable() != null) {
+                    Bitmap bitmap = ((BitmapDrawable) photo.getDrawable()).getBitmap();
+                    Bitmap bitmapSmall;
+                    if (bitmap.getByteCount() > 350000) {
+                        bitmapSmall = Request.resizeBitmap(bitmap);
+                    } else {
+                        bitmapSmall = bitmap;
+                    }
+                    request = new Request(user, strtitle, strtext, bitmapSmall, time);
+                } else {
+                    request=new Request(user, strtitle, strtext, time);
+                }
                 dBhelper.addRequest(request);
                 Toast toast = Toast.makeText(this, "Запрос добавлен", Toast.LENGTH_LONG);
                 toast.show();
                 finish();
             }
         } else if (v.getId() == photo.getId()) {
-            Intent gallery=new Intent();
+            Intent gallery = new Intent();
             gallery.setType("image/*");
             gallery.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(gallery, "Select picture"), PICK_IMG);
-        } else if (v.getId()==back.getId()){
+        } else if (v.getId() == back.getId()) {
             finish();
         }
     }
-/**
- * метод для получения фотографии из галереи
- * */
+
+    /**
+     * метод для получения фотографии из галереи
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==PICK_IMG && resultCode==RESULT_OK){
-            imageUri=data.getData(); //получить uri
+        if (requestCode == PICK_IMG && resultCode == RESULT_OK) {
+            imageUri = data.getData(); //получить uri
             try {
-                Bitmap bitmap= MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                 photo.setImageBitmap(bitmap);
-                photoBitmap=bitmap;
-            } catch (IOException e){
+                photoBitmap = bitmap;
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

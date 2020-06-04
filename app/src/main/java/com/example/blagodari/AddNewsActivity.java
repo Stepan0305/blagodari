@@ -60,25 +60,31 @@ public class AddNewsActivity extends AppCompatActivity {
                 toast.show();
             } else {
                 if (photoBitmap == null) {
-                    photo.setImageResource(R.drawable.nophoto);
+                    photo.setImageDrawable(null);
                 }
-                Bitmap bitmap = ((BitmapDrawable) photo.getDrawable()).getBitmap();
-                Bitmap bitmapSmall;
-                if (bitmap.getByteCount()>350000){
-                    bitmapSmall=Request.resizeBitmap(bitmap);
-                } else{
-                    bitmapSmall=bitmap;
-                }
+                News news;
                 String strtitle = title.getText().toString();
                 String strtext = text.getText().toString();
                 long time = System.currentTimeMillis() / 1000;
-                News news=new News(strtitle, strtext, bitmapSmall, time);
+                if (photo.getDrawable() != null) {
+                    Bitmap bitmap = ((BitmapDrawable) photo.getDrawable()).getBitmap();
+                    Bitmap bitmapSmall;
+                    if (bitmap.getByteCount() > 350000) {
+                        bitmapSmall = News.resizeBitmap(bitmap);
+                    } else {
+                        bitmapSmall = bitmap;
+                    }
+                    news = new News(strtitle, strtext, bitmapSmall, time);
+                } else {
+                    news= new News(strtitle, strtext, time);
+                }
+
                 dBhelper.addNews(news);
                 Toast toast = Toast.makeText(this, "Новость добавлена", Toast.LENGTH_LONG);
                 toast.show();
                 finish();
             }
-        } else if (v.getId()==back.getId()){
+        } else if (v.getId() == back.getId()) {
             finish();
         }
     }
@@ -91,7 +97,7 @@ public class AddNewsActivity extends AppCompatActivity {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                 photo.setImageBitmap(bitmap);
-                photoBitmap=bitmap;
+                photoBitmap = bitmap;
             } catch (IOException e) {
                 e.printStackTrace();
             }

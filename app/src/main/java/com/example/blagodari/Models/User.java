@@ -122,7 +122,7 @@ public class User {
         int height = bitmap.getHeight();
         float prefWidth=width;
         float prefHeight=height;
-        while (prefHeight+prefWidth>500){
+        while (prefHeight+prefWidth>300){
             prefHeight=prefHeight/1.5f;
             prefWidth=prefWidth/1.5f;
         }

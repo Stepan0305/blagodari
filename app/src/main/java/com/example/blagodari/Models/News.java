@@ -42,6 +42,13 @@ public class News {
         this.time_created = time_created;
     }
 
+    public News(int id, String title, String text, long time_created) {
+        this.id = id;
+        this.title = title;
+        this.text = text;
+        this.time_created = time_created;
+    }
+
     public News(String title, String text, long time_created) {
         this.title = title;
         this.text = text;

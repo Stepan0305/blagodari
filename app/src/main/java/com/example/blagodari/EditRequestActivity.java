@@ -63,13 +63,24 @@ public class EditRequestActivity extends AppCompatActivity {
                 Toast toast = Toast.makeText(this, "Некорректно введены данные", Toast.LENGTH_LONG);
                 toast.show();
             }else {
-            Bitmap bitmap=((BitmapDrawable)image.getDrawable()).getBitmap();
             String strtitle=title.getText().toString();
             String strtext=text.getText().toString();
             Request r=dBhelper.getRequestById(id);
             User user=r.getUser();
             long time=r.getTime_created();
-            Request request=new Request(id, user, strtitle, strtext, bitmap, time);
+            Request request;
+                if (image.getDrawable() != null) {
+                    Bitmap bitmap = ((BitmapDrawable) image.getDrawable()).getBitmap();
+                    Bitmap bitmapSmall;
+                    if (bitmap.getByteCount() > 350000) {
+                        bitmapSmall = Request.resizeBitmap(bitmap);
+                    } else {
+                        bitmapSmall = bitmap;
+                    }
+                    request = new Request(user, strtitle, strtext, bitmapSmall, time);
+                } else {
+                    request=new Request(user, strtitle, strtext, time);
+                }
             dBhelper.updateRequest(request);
             Toast toast=Toast.makeText(this, "Запрос обновлен", Toast.LENGTH_LONG);
             toast.show();
@@ -77,6 +88,8 @@ public class EditRequestActivity extends AppCompatActivity {
             startActivity(intent);}
         } else if (v.getId()==back.getId()){
             finish();
+        } else if (v.getId()==R.id.btnDeletePhoto){
+            image.setImageResource(R.drawable.addphoto);
         }
     }
 

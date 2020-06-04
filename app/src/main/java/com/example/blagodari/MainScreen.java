@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +48,7 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
     BottomNavigationView bottomNavigationView;
     View header;
     TextView nameOnHeader;
+    ImageView avatarOnHeader;
     DBhelper dBhelper;
 
     @Override
@@ -81,6 +84,11 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
             header = navigationView.getHeaderView(0);
             nameOnHeader = (TextView) header.findViewById(R.id.txtNameSurnameOnHeader);
             nameOnHeader.setText(dBhelper.getCurrentUser().getFirstName() + " " + dBhelper.getCurrentUser().getSurname() + "");
+            avatarOnHeader=header.findViewById(R.id.imgAvatarOnHeader);
+            Bitmap ava=dBhelper.getCurrentUser().getAvatar();
+            if (ava!=null) {
+                avatarOnHeader.setImageBitmap(ava);
+            }
         }
     }
 

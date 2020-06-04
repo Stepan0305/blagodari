@@ -74,11 +74,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.03" />
+    <ImageButton
+        android:id="@+id/btnDeletePhoto"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:background="@color/unvisible"
+        android:onClick="confirm"
+        android:src="@drawable/delete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.03" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="62dp"
-        android:background="@color/Wh"
+        android:background="@color/ghost"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -91,7 +104,6 @@
             android:layout_width="170dp"
             android:layout_height="38dp"
             android:background="@drawable/buttons"
-
             android:fontFamily="@font/tchoitalic"
             android:onClick="confirm"
             android:text="Сохранить"

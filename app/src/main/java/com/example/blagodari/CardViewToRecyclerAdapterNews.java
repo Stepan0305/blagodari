@@ -50,8 +50,9 @@ public class CardViewToRecyclerAdapterNews extends RecyclerView.Adapter<CardView
         final News n = news.get(position);
         holder.title.setText(n.getTitle());
         holder.text.setText(n.getText());
-        // holder.photo.setImageResource(R.drawable.header1);
-        holder.photo.setImageBitmap(n.getPhoto());
+        if (n.getPhoto()!=null) {
+            holder.photo.setImageBitmap(n.getPhoto());
+        }
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
