@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightGrey">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="185dp"
+            android:background="@drawable/header3">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center|top"
+                app:cardCornerRadius="50dp"
+                android:layout_marginTop="20dp"
+                >
+
+                <ImageView
+                    android:id="@+id/imgAvatarOnProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/avatar" />
+            </androidx.cardview.widget.CardView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:text="Барабанов Бульбаслав"
+                android:id="@+id/txtNameOnProfile"
+                android:layout_gravity="center|bottom"
+                android:fontFamily="@font/tchoitalic"
+                android:textColor="@color/lightBlue"
+                android:textSize="23sp"
+                android:layout_marginBottom="8dp"/>
+        </FrameLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Благодарности:"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:fontFamily="@font/tchoitalic"
+                android:textColor="@color/lightBlue"
+                android:textSize="25sp"/>
+
+        </FrameLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="55dp"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+            <ImageView
+                android:layout_width="55dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/like_active" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="0"
+                android:id="@+id/txtLikeCountOnProfile"
+                android:textColor="@color/red"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginStart="12dp"/>
+        </LinearLayout>
+        </FrameLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/btnEditProfile"
+                android:layout_width="210dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="23dp"
+                android:layout_marginBottom="10dp"
+                android:text="Редактировать профиль"
+                android:textAllCaps="false"
+                android:background="@drawable/buttons"
+                android:textColor="@color/Wh"
+                android:layout_gravity="center"
+                android:fontFamily="@font/tchoitalic"
+                android:textSize="19dp"/>
+        </FrameLayout>
+    </LinearLayout>
+</ScrollView>

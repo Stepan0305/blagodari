@@ -86,7 +86,7 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
             nameOnHeader.setText(dBhelper.getCurrentUser().getFirstName() + " " + dBhelper.getCurrentUser().getSurname() + "");
             avatarOnHeader=header.findViewById(R.id.imgAvatarOnHeader);
             Bitmap ava=dBhelper.getCurrentUser().getAvatar();
-            if (ava!=null) {
+                if (ava!=null) {
                 avatarOnHeader.setImageBitmap(ava);
             }
         }
@@ -110,6 +110,9 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
                     loadFragment(AddScreenFragment.newInstance());
                     txtTitle.setText("Новый запрос");
                     return true;
+                case R.id.btnProfile:
+                    loadFragment(UserProfileFragment.newInstance());
+                    txtTitle.setText("Мой профиль");
             }
             return false;
         }

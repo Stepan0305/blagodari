@@ -181,8 +181,7 @@ public class DBhelper extends SQLiteOpenHelper {
         String passwd = user.getPassword();
         String email = user.getEmail().toLowerCase();
         long date = user.getDate_created();
-        String avatar;
-        avatar = user.getAvatarAsString();
+        String avatar = user.getAvatarAsString();
         contentValues.put(USER_NAME, name);
         contentValues.put(USER_SURNAME, surname);
         contentValues.put(USER_PASSWORD, passwd);
@@ -193,6 +192,24 @@ public class DBhelper extends SQLiteOpenHelper {
         }
         database.insert(TABLE_USERS, null, contentValues);
         contentValues.clear();
+    }
+    public void updateUserProfile(User user){
+        SQLiteDatabase database = getWritableDatabase();
+        String name = user.getFirstName();
+        String surname = user.getSurname();
+        String passwd = user.getPassword();
+        String email = user.getEmail().toLowerCase();
+        String avatar = user.getAvatarAsString();
+        String sql;
+        if (avatar!=null) {
+            sql = "update " + TABLE_USERS + " set " + USER_NAME + "= '" + name + "', " + USER_SURNAME + "= '" + surname +
+                    "', " + USER_PASSWORD + "= '" + passwd + "', " + USER_EMAIL + "= '" + email + "', "+USER_AVATAR+
+            "= '"+avatar+"'";
+        } else {
+            sql = "update " + TABLE_USERS + " set " + USER_NAME + "= '" + name + "', " + USER_SURNAME + "= '" + surname +
+                    "', " + USER_PASSWORD + "= '" + passwd + "', " + USER_EMAIL + "= '" + email + "'";
+        }
+        database.execSQL(sql);
     }
 
     public void setCurrentUser(User user) {
