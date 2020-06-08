@@ -1,11 +1,14 @@
 package com.example.blagodari;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -46,15 +49,15 @@ public class ChatActivity extends AppCompatActivity {
         int userToId=i.getIntExtra("UserTo", 0);
         int chatId=i.getIntExtra("chat", 0);
         current = dBhelper.getCurrentUser();
-        if (userToId!=0) {
+        if (userToId!=0) {          //если с открытого запроса или профиля юзера
             userTo = dBhelper.getUserById(userToId);
-            if (dBhelper.getChatByTwoUsers(userTo, current) != null) {
+            if (dBhelper.getChatByTwoUsers(userTo, current) != null) { //проверка, есть ли уже такой чат
                 chat = dBhelper.getChatByTwoUsers(userTo, current);
             } else {
                 dBhelper.createNewChat(userTo, current);
                 chat = dBhelper.getChatByTwoUsers(userTo, current);
             }
-        } else{
+        } else{                                              //если со списка чатов юзера
             chat=dBhelper.getChatById(chatId);
             if (chat.getUser1().getId()==current.getId()){
                 userTo=chat.getUser2();
@@ -96,6 +99,11 @@ public class ChatActivity extends AppCompatActivity {
             messages=dBhelper.getAllChatMessages(chat);
             adapter=new CardViewToRecyclerAdapterChat(this, messages);
             recyclerView.setAdapter(adapter);
+        } else if(v.getId()==name.getId()){
+            Intent i=new Intent(this, AnotherUserAccount.class);
+            i.putExtra("userId", userTo.getId());
+            startActivity(i);
         }
     }
+
 }

@@ -65,7 +65,7 @@ public class DBhelper extends SQLiteOpenHelper {
     public static final String LIKE_TO = "LikeTo";
 
     public static final String LOGGED_USER_ID = "UserLogged"; //для shared preferences
-    public static final int ADMIN_ID = 3;
+    public static final int ADMIN_ID = 1;
     private User CurrentUser;
     ContentValues contentValues = new ContentValues();
     Context context;
@@ -204,10 +204,10 @@ public class DBhelper extends SQLiteOpenHelper {
         if (avatar!=null) {
             sql = "update " + TABLE_USERS + " set " + USER_NAME + "= '" + name + "', " + USER_SURNAME + "= '" + surname +
                     "', " + USER_PASSWORD + "= '" + passwd + "', " + USER_EMAIL + "= '" + email + "', "+USER_AVATAR+
-            "= '"+avatar+"'";
+            "= '"+avatar+"' where "+KEY_ID_USERS+"="+user.getId();
         } else {
             sql = "update " + TABLE_USERS + " set " + USER_NAME + "= '" + name + "', " + USER_SURNAME + "= '" + surname +
-                    "', " + USER_PASSWORD + "= '" + passwd + "', " + USER_EMAIL + "= '" + email + "'";
+                    "', " + USER_PASSWORD + "= '" + passwd + "', " + USER_EMAIL + "= '" + email + "' where "+KEY_ID_USERS+"="+user.getId();
         }
         database.execSQL(sql);
     }

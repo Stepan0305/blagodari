@@ -60,6 +60,14 @@ public class CardViewToRecyclerAdapterMain extends RecyclerView.Adapter<CardView
         if (request.getUser().getAvatar() != null) {
             holder.avatar.setImageBitmap(request.getUser().getAvatar());
         }
+        holder.avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(v.getContext(), AnotherUserAccount.class);
+                i.putExtra("userId", request.getUser().getId());
+                v.getContext().startActivity(i);
+            }
+        });
         holder.open.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

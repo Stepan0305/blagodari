@@ -32,20 +32,13 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
         } else if (v.getId() == R.id.btnSignUp) {
 
-            if (name.getText().toString().length() > 128 || name.getText().toString().length() < 1 ||
-                    surname.getText().toString().length() > 128 || surname.getText().toString().length() < 1 ||
-                   // !(email.getText().toString().matches("[a-zA-Z]")) || email.getText().toString().matches("[йцукенгшщзхъэждлорпавыфячсмитьбюЮБЬТИМСЧЯФЫВАПРОЛДЖЭЪХЗЩШГНЕКУЦЙ]")||
-            email.getText().toString().length() > 128 || email.getText().toString().length() < 1 ||
-                    password.getText().toString().length() > 50 || password.getText().toString().length() < 6)
+            if (!Pomogator.checkInputSignUp(name.getText().toString(), surname.getText().toString(),
+                    email.getText().toString(), password.getText().toString()))
             {
                 Toast toast = Toast.makeText(this, "Данныe введены некорректно", Toast.LENGTH_LONG);
                 toast.show();
             } else{
-               // DBhelper db = new DBhelper(this);
                 long time = System.currentTimeMillis() / 1000;
-               /* User user = new User(name.getText().toString(), surname.getText().toString()+"", password.getText().toString()
-                        , email.getText().toString(), time);
-               db.addUser(user);*/
                 Intent intent = new Intent(this, AddAvatar.class);
                 intent.putExtra("name", name.getText().toString());
                 intent.putExtra("surname", surname.getText().toString());

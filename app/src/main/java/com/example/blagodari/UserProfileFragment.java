@@ -1,5 +1,6 @@
 package com.example.blagodari;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,8 @@ import androidx.fragment.app.Fragment;
 
 import com.example.blagodari.Models.DBhelper;
 import com.example.blagodari.Models.User;
+
+import java.util.Objects;
 
 public class UserProfileFragment extends Fragment {
     ImageView avatar;
@@ -36,6 +39,13 @@ public class UserProfileFragment extends Fragment {
         User user=dBhelper.getCurrentUser();
         name.setText(user.getFirstName()+" "+user.getSurname());
         likes.setText(dBhelper.likeCount(user)+"");
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(getContext(), EditProfileActivity.class);
+               getContext().startActivity(i);
+            }
+        });
         if (user.getAvatar()!=null){
             avatar.setImageBitmap(user.getAvatar());
         }

@@ -113,6 +113,7 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
                 case R.id.btnProfile:
                     loadFragment(UserProfileFragment.newInstance());
                     txtTitle.setText("Мой профиль");
+                    return true;
             }
             return false;
         }

@@ -16,4 +16,13 @@ public class Pomogator {
         calendar.setTimeInMillis(time*1000);
         return sdf.format(calendar.getTime());
     }
+    public static boolean checkInputSignUp(String name, String surname, String email, String password){
+        if (name.length() > 128 || name.length() < 1 ||
+                surname.length() > 128 || surname.length() < 1 ||
+                email.length() > 128 || email.length() < 1 ||
+                password.length() > 50 || password.length() < 6||!email.matches("^[a-zA-Z0-9]+@[a-zA-Z0-9]+(.[a-zA-Z]{2,})$")){
+            return false;
+        }else return true;
+    }
+
 }

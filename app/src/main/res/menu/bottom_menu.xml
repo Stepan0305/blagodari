@@ -14,6 +14,6 @@
         android:title="" />
    <item
         android:id="@+id/btnProfile"
-        android:icon="@drawable/ic_account_circle_black_24dp"
+        android:icon="@drawable/icon_user"
         android:title="" />
 </menu>
