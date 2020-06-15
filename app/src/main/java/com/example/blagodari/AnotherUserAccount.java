@@ -45,7 +45,7 @@ public class AnotherUserAccount extends AppCompatActivity {
         if (currentUser.getAvatar() != null) {
             avatar.setImageBitmap(currentUser.getAvatar());
         }
-        if(dBhelper.checkIfAlreadyLiked(dBhelper.getCurrentUser(), currentUser)){
+        if (dBhelper.checkIfAlreadyLiked(dBhelper.getCurrentUser(), currentUser)) {
             like.setImageResource(R.drawable.like_active);
         }
         name.setText(currentUser.getFirstName() + " " + currentUser.getSurname());
@@ -58,36 +58,41 @@ public class AnotherUserAccount extends AppCompatActivity {
             Intent i = new Intent(this, ChatActivity.class);
             i.putExtra("UserTo", currentUser.getId());
             startActivity(i);
-        } else if (v.getId()==like.getId()){
-            if (!dBhelper.checkIfAlreadyLiked(dBhelper.getCurrentUser(), currentUser)) { //если еще не лайкнул
-                dBhelper.addLike(dBhelper.getCurrentUser(), currentUser);
-                like.setImageResource(R.drawable.like_active);
-                countLikes.setText(dBhelper.likeCount(currentUser)+"");
+        } else if (v.getId() == like.getId()) {
+            if (dBhelper.getCurrentUser().getId() == currentUser.getId()) {
+                like.setVisibility(View.GONE);
             } else {
-                dBhelper.deleteLike(dBhelper.getCurrentUser(), currentUser);
-                like.setImageResource(R.drawable.like_non_active);
-                countLikes.setText(dBhelper.likeCount(currentUser)+"");
+                if (!dBhelper.checkIfAlreadyLiked(dBhelper.getCurrentUser(), currentUser)) { //если еще не лайкнул
+                    dBhelper.addLike(dBhelper.getCurrentUser(), currentUser);
+                    like.setImageResource(R.drawable.like_active);
+                    countLikes.setText(dBhelper.likeCount(currentUser) + "");
+                } else {
+                    dBhelper.deleteLike(dBhelper.getCurrentUser(), currentUser);
+                    like.setImageResource(R.drawable.like_non_active);
+                    countLikes.setText(dBhelper.likeCount(currentUser) + "");
+                }
             }
-        } else if (v.getId()==back.getId()){
+        } else if (v.getId() == back.getId()) {
             finish();
-        } else if (v.getId()==complain.getId()){
+        } else if (v.getId() == complain.getId()) {
             openContextMenu(complain);
         }
     }
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         menu.add(0, 1, 0, "Агрессивное поведение");
         menu.add(0, 2, 0, "Спам");
         menu.add(0, 3, 0, "Мошенничество");
-        menu.add(0,4,0, "Другое");
+        menu.add(0, 4, 0, "Другое");
     }
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
-        User admin=dBhelper.getUserById(DBhelper.ADMIN_ID);
-        User current=dBhelper.getCurrentUser();
+        User admin = dBhelper.getUserById(DBhelper.ADMIN_ID);
+        User current = dBhelper.getCurrentUser();
         Chat chat;
-        long time=System.currentTimeMillis()/1000;
+        long time = System.currentTimeMillis() / 1000;
         if (dBhelper.getChatByTwoUsers(admin, current) != null) { //проверка, есть ли уже такой чат
             chat = dBhelper.getChatByTwoUsers(admin, current);
         } else {
@@ -95,23 +100,23 @@ public class AnotherUserAccount extends AppCompatActivity {
             chat = dBhelper.getChatByTwoUsers(admin, current);
         }
         Message m;
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case 1:
-                m=new Message(chat, current, admin, "Пользователь с id "+currentUser.getId()+" ведет" +
+                m = new Message(chat, current, admin, "Пользователь с id " + currentUser.getId() + " ведет" +
                         " себя агрессивно!", time);
                 dBhelper.createNewMessage(m);
                 break;
             case 2:
-                m=new Message(chat, current, admin, "Пользователь с id "+currentUser.getId()+" занимается" +
+                m = new Message(chat, current, admin, "Пользователь с id " + currentUser.getId() + " занимается" +
                         " спамом!", time);
                 dBhelper.createNewMessage(m);
                 break;
             case 3:
-                m=new Message(chat, current, admin, "Пользователь с id "+currentUser.getId()+" - мошенник!", time);
+                m = new Message(chat, current, admin, "Пользователь с id " + currentUser.getId() + " - мошенник!", time);
                 dBhelper.createNewMessage(m);
                 break;
             case 4:
-                m=new Message(chat, current, admin, "Пользователь с id "+currentUser.getId()+" ведет себя" +
+                m = new Message(chat, current, admin, "Пользователь с id " + currentUser.getId() + " ведет себя" +
                         " неприемлимо и нарушает правила проекта!", time);
                 dBhelper.createNewMessage(m);
                 break;

@@ -31,6 +31,7 @@ public class EditRequestActivity extends AppCompatActivity {
     Uri imageUri;
     DBhelper dBhelper;
     int id;
+    Bitmap photoBitmap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,17 +70,21 @@ public class EditRequestActivity extends AppCompatActivity {
             User user=r.getUser();
             long time=r.getTime_created();
             Request request;
-                if (image.getDrawable() != null) {
-                    Bitmap bitmap = ((BitmapDrawable) image.getDrawable()).getBitmap();
+                if (photoBitmap != null) {
+                   // Bitmap bitmap = ((BitmapDrawable) image.getDrawable()).getBitmap();
+                    Bitmap bitmap=photoBitmap;
                     Bitmap bitmapSmall;
                     if (bitmap.getByteCount() > 350000) {
                         bitmapSmall = Request.resizeBitmap(bitmap);
                     } else {
                         bitmapSmall = bitmap;
                     }
-                    request = new Request(user, strtitle, strtext, bitmapSmall, time);
+                    request = new Request(r.getId(),user, strtitle, strtext, bitmapSmall, time);
                 } else {
-                    request=new Request(user, strtitle, strtext, time);
+                    if (r.getPhotoAsString() != null) {
+                        request= new Request(r.getId(),user, strtitle, strtext, r.getPhoto(), time);
+                    } else{
+                    request=new Request(r.getId(),user, strtitle, strtext, time);}
                 }
             dBhelper.updateRequest(request);
             Toast toast=Toast.makeText(this, "Запрос обновлен", Toast.LENGTH_LONG);
@@ -101,6 +106,7 @@ public class EditRequestActivity extends AppCompatActivity {
             try {
                 Bitmap bitmap= MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                 image.setImageBitmap(bitmap);
+                photoBitmap = bitmap;
             } catch (IOException e){
                 e.printStackTrace();
             }
