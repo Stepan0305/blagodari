@@ -6,14 +6,26 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class DBhelper extends SQLiteOpenHelper {
+public class DBhelper {
     //дб
     public static final String DATABASE_NAME = "Blagodari_database";
     public static final int DATABASE_VERSION = 15;
@@ -69,147 +81,129 @@ public class DBhelper extends SQLiteOpenHelper {
     private User CurrentUser;
     ContentValues contentValues = new ContentValues();
     Context context;
+    public static final String PATH = "https://blagodari.herokuapp.com/";
 
-    public DBhelper(@Nullable Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this.context = context;
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        String user_sql = "Create table " + TABLE_USERS + " ( " + KEY_ID_USERS + " integer primary key, " + USER_NAME +
-                " nvarchar(128), " + USER_SURNAME + " nvarchar(128), " + USER_PASSWORD + " varchar(50), " +
-                USER_EMAIL + " varchar(128), " + USER_ACCOUNT_DATE_CREATED + " integer, " + USER_AVATAR + " longtext) ";
-        db.execSQL(user_sql);
-        String request_sql = "Create table " + TABLE_REQUESTS + " (" + KEY_ID_REQUESTS + " integer primary key, " +
-                REQUEST_USER_CREATED_ID + " integer, " +
-                REQUEST_TITLE + " nvarchar(77), " + REQUEST_TEXT + " text, " + REQUEST_TIME_CREATED + " integer ,"
-                + REQUEST_PHOTO + " text, " + " foreign key (" +
-                REQUEST_USER_CREATED_ID + ") references " + TABLE_USERS + " (" + KEY_ID_USERS + "))";
-        db.execSQL(request_sql);
-        String sql = "create table " + TABLE_NEWS + " ( " + KEY_ID_NEWS + " integer primary key, " + NEWS_TITLE + " nvarchar(77), " +
-                NEWS_TEXT + " text, " + NEWS_TIME_CREATED + " integer, " + NEWS_PHOTO + " text )";
-        db.execSQL(sql);
-        sql = "create table " + TABLE_HISTORY + " ( " + KEY_ID_HISTORY + " integer primary key, " + HISTORY_EVENT_TYPE_ID + " integer, " +
-                HISTORY_USER_CREATED_ID + " integer, " + HISTORY_EVENT_ID + " integer, " + " foreign key (" + HISTORY_USER_CREATED_ID + ") references " + TABLE_USERS +
-                " (" + KEY_ID_USERS + "))";
-        db.execSQL(sql);
-        sql = "create table " + TABLE_CHATS + " ( " + KEY_ID_CHATS + " integer primary key, " + CHATS_USER_1 + " integer, " +
-                CHATS_USER_2 + " integer) ";
-        db.execSQL(sql);
-        sql = "create table " + TABLE_MESSAGES + " ( " + MESSAGES_CHAT_ID + " integer, " + MESSAGE_FROM + " integer, " + MESSAGE_TO + " integer, " +
-                MESSAGE_TEXT + " text, " + MESSAGE_TIME_CREATED + " integer, foreign key ( " + MESSAGES_CHAT_ID + " ) references " +
-                TABLE_CHATS + " ( " + KEY_ID_CHATS + " ))";
-        db.execSQL(sql);
-        sql = "create table " + TABLE_LIKES + " ( " + LIKE_FROM + " integer, " + LIKE_TO + " integer, foreign key ( " +
-                LIKE_FROM + " ) references " + TABLE_USERS + " ( " + KEY_ID_USERS + " ),  foreign key ( " + LIKE_TO +
-                " )  references " + TABLE_USERS + " ( " + KEY_ID_USERS + " ) )";
-        db.execSQL(sql);
-        //прописать тут создание каждой таблицы
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (newVersion == 14) {
-            String sql;
-            sql = "create table if not exists " + TABLE_CHATS + " ( " + KEY_ID_CHATS + " integer primary key, " + CHATS_USER_1 + " integer, " +
-                    CHATS_USER_2 + " integer) ";
-            db.execSQL(sql);
-            sql = "create table if not exists " + TABLE_MESSAGES + " ( " + MESSAGES_CHAT_ID + " integer, " + MESSAGE_FROM + " integer, " + MESSAGE_TO + " integer, " +
-                    MESSAGE_TEXT + " text, " + MESSAGE_TIME_CREATED + " integer, foreign key ( " + MESSAGES_CHAT_ID + " ) references " +
-                    TABLE_CHATS + " ( " + KEY_ID_CHATS + " ))";
-            db.execSQL(sql);
-        } else if (newVersion == 15) {
-            String sql = "alter table " + TABLE_USERS + " add column " + USER_AVATAR + " longtext";
-            db.execSQL(sql);
-            sql = "create table " + TABLE_LIKES + " ( " + LIKE_FROM + " integer, " + LIKE_TO + " integer, foreign key ( " +
-                    LIKE_FROM + " ) references " + TABLE_USERS + " ( " + KEY_ID_USERS + " ),  foreign key ( " + LIKE_TO +
-                    " )  references " + TABLE_USERS + " ( " + KEY_ID_USERS + " ) )";
-            db.execSQL(sql);
-        }
-    }
 
     public User getUserById(int id) {
-        SQLiteDatabase database = getReadableDatabase();
-        String sql = "select * from " + TABLE_USERS + " where " + KEY_ID_USERS + "=" + id;
-        Cursor cursor = database.rawQuery(sql, null);
-        if (cursor.moveToFirst()) {
-            int userid = cursor.getInt(0);
-            String name = cursor.getString(cursor.getColumnIndex(USER_NAME));
-            String surname = cursor.getString(cursor.getColumnIndex(USER_SURNAME));
-            String password = cursor.getString(cursor.getColumnIndex(USER_PASSWORD));
-            String email = cursor.getString(cursor.getColumnIndex(USER_EMAIL));
-            long createdtime = cursor.getLong(cursor.getColumnIndex(USER_ACCOUNT_DATE_CREATED));
-            String avatar = cursor.getString(cursor.getColumnIndex(USER_AVATAR));
-            User user;
-            if (avatar != null) {
-                user = new User(userid, name, surname, password, email, createdtime, avatar);
-            } else {
-                user = new User(userid, name, surname, password, email, createdtime);
-            }
-            return user;
+        String firstname=null, surname=null, passwd=null, email=null, avatar=null;
+        long time=0;
+        try {
+            String url = PATH + "GetUserById?id=" + id;
+            MyJsonTask task = new MyJsonTask();
+            task.execute(url);
+            String result = task.get();
+            JSONObject jsonObject = new JSONObject(result);
+            firstname = jsonObject.getString("firstname");
+            surname = jsonObject.getString("surname");
+            passwd = jsonObject.getString("password");
+            email = jsonObject.getString("email");
+            time = jsonObject.getLong("time");
+            avatar = jsonObject.getString("avatar");
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        return null;
+        User u;
+        if (avatar == null) {
+         u = new User(id, firstname, surname, passwd, email, time);
+    } else {
+            u = new User(id, firstname, surname, passwd, email, time, avatar);
+        }
+        return u;
     }
 
     public User getUserByEmailAndPassword(String email, String password) {
-        SQLiteDatabase database = getReadableDatabase();
-        String sql = "select * from " + TABLE_USERS + " where " + USER_EMAIL + " = '" + email +
-                "' and " + USER_PASSWORD + " = '" + password + "'";
-        Cursor cursor = database.rawQuery(sql, null);
-        if (cursor.moveToFirst()) {
-            int userid = cursor.getInt(0);
-            String name = cursor.getString(cursor.getColumnIndex(USER_NAME));
-            String surname = cursor.getString(cursor.getColumnIndex(USER_SURNAME));
-            long createdtime = cursor.getLong(cursor.getColumnIndex(USER_ACCOUNT_DATE_CREATED));
-            String avatar = cursor.getString(cursor.getColumnIndex(USER_AVATAR));
-            User user;
-            if (avatar != null) {
-                user = new User(userid, name, surname, password, email, createdtime, avatar);
-            } else {
-                user = new User(userid, name, surname, password, email, createdtime);
-            }
-            return user;
+        String firstname=null, surname=null, avatar=null;
+        long time=0;
+        int id=-1;
+        try {
+            String url = PATH + "GetUserByEmailAndPassword?email=" + email+"&password="+password;
+            MyJsonTask task = new MyJsonTask();
+            task.execute(url);
+            String result = task.get();
+            JSONObject jsonObject = new JSONObject(result);
+            firstname = jsonObject.getString("firstname");
+            surname = jsonObject.getString("surname");
+            time = jsonObject.getLong("time");
+            id=jsonObject.getInt("id");
+            avatar = jsonObject.getString("avatar");
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        return null;
+        User u;
+        if (avatar == null) {
+            u = new User(id, firstname, surname, password, email, time);
+        } else {
+            u = new User(id, firstname, surname, password, email, time, avatar);
+        }
+        return u;
     }
 
-    public void addUser(User user) {
-        SQLiteDatabase database = getWritableDatabase();
-        String name = user.getFirstName();
-        String surname = user.getSurname();
-        String passwd = user.getPassword();
-        String email = user.getEmail().toLowerCase();
-        long date = user.getDate_created();
-        String avatar = user.getAvatarAsString();
-        contentValues.put(USER_NAME, name);
-        contentValues.put(USER_SURNAME, surname);
-        contentValues.put(USER_PASSWORD, passwd);
-        contentValues.put(USER_EMAIL, email);
-        contentValues.put(USER_ACCOUNT_DATE_CREATED, date);
-        if (avatar != null) {
-            contentValues.put(USER_AVATAR, avatar);
+    public void addUser(User u) {
+        try {
+            URL url=new URL(PATH+"AddUser");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", u.getId());
+            jsonObject.put("firstname", u.getFirstName());
+            jsonObject.put("surname", u.getSurname());
+            jsonObject.put("password", u.getPassword());
+            jsonObject.put("email", u.getEmail());
+            jsonObject.put("time", u.getDate_created());
+            jsonObject.put("avatar", u.getAvatarAsString());
+            OutputStream os = con.getOutputStream();
+            byte[] input = jsonObject.toString().getBytes("utf-8");
+            os.write(input);
+            os.flush();
+            os.close();
+
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        database.insert(TABLE_USERS, null, contentValues);
-        contentValues.clear();
     }
-    public void updateUserProfile(User user){
-        SQLiteDatabase database = getWritableDatabase();
-        String name = user.getFirstName();
-        String surname = user.getSurname();
-        String passwd = user.getPassword();
-        String email = user.getEmail().toLowerCase();
-        String avatar = user.getAvatarAsString();
-        String sql;
-        if (avatar!=null) {
-            sql = "update " + TABLE_USERS + " set " + USER_NAME + "= '" + name + "', " + USER_SURNAME + "= '" + surname +
-                    "', " + USER_PASSWORD + "= '" + passwd + "', " + USER_EMAIL + "= '" + email + "', "+USER_AVATAR+
-            "= '"+avatar+"' where "+KEY_ID_USERS+"="+user.getId();
-        } else {
-            sql = "update " + TABLE_USERS + " set " + USER_NAME + "= '" + name + "', " + USER_SURNAME + "= '" + surname +
-                    "', " + USER_PASSWORD + "= '" + passwd + "', " + USER_EMAIL + "= '" + email + "' where "+KEY_ID_USERS+"="+user.getId();
+
+    public void updateUserProfile(User u) {
+        try {
+            URL url=new URL(PATH+"UpdateUserProfile");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", u.getId());
+            jsonObject.put("firstname", u.getFirstName());
+            jsonObject.put("surname", u.getSurname());
+            jsonObject.put("password", u.getPassword());
+            jsonObject.put("email", u.getEmail());
+            jsonObject.put("time", u.getDate_created());
+            jsonObject.put("avatar", u.getAvatarAsString());
+            OutputStream os = con.getOutputStream();
+            byte[] input = jsonObject.toString().getBytes("utf-8");
+            os.write(input);
+            os.flush();
+            os.close();
+
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        database.execSQL(sql);
     }
 
     public void setCurrentUser(User user) {
@@ -238,195 +232,318 @@ public class DBhelper extends SQLiteOpenHelper {
     }
 
     public boolean checkIfUserExists(String email, String password) {
-        SQLiteDatabase database = getReadableDatabase();
-        String sql = "select * from " + TABLE_USERS + " where " + USER_EMAIL + "='" + email.toLowerCase() + "' and " +
-                USER_PASSWORD + "='" + password + "'";
-        Cursor cursor = database.rawQuery(sql, null);
-        return cursor.moveToFirst();
+        try{
+            String url = PATH + "CheckIfUserExists?email=" + email+"&password="+password;
+            MyJsonTask task = new MyJsonTask();
+            task.execute(url);
+            String result = task.get();
+            JSONObject jsonObject = new JSONObject(result);
+            return jsonObject.getBoolean("check");
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public void addRequest(Request request) {
-        SQLiteDatabase database = getWritableDatabase();
-        int userid = request.getUser().getId();
-        String title = request.getTitle();
-        String text = request.getText();
-        String photo;
-        photo = request.getPhotoAsString();
-        long time = request.getTime_created();
-        contentValues.put(REQUEST_USER_CREATED_ID, userid);
-        contentValues.put(REQUEST_TITLE, title);
-        contentValues.put(REQUEST_TEXT, text);
-        if (photo != null) {
-            contentValues.put(REQUEST_PHOTO, photo);
+        try {
+            URL url=new URL(PATH+"AddRequest");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", request.getId());
+            jsonObject.put("userId", request.getUser().getId());
+            jsonObject.put("title", request.getTitle());
+            jsonObject.put("text", request.getText());
+            if (request.getPhotoAsString()!=null){
+                jsonObject.put("photo", request.getPhotoAsString());
+            }
+            jsonObject.put("time", request.getTime_created());
+            OutputStream os = con.getOutputStream();
+            byte[] input = jsonObject.toString().getBytes("utf-8");
+            os.write(input);
+            os.flush();
+            os.close();
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        contentValues.put(REQUEST_TIME_CREATED, time);
-        database.insert(TABLE_REQUESTS, null, contentValues);
-        contentValues.clear();
     }
 
     public ArrayList<Request> getAllRequests() {
-        ArrayList<Request> requests = new ArrayList<>();
-        SQLiteDatabase database = getReadableDatabase();
-        String sql = "Select * from " + TABLE_REQUESTS + " ORDER BY "
-                + KEY_ID_REQUESTS + " DESC";
-        Cursor c = database.rawQuery(sql, null);
-        while (c.moveToNext()) {
-            int id = c.getInt(0);
-            String title = c.getString(c.getColumnIndex(REQUEST_TITLE));
-            String text = c.getString(c.getColumnIndex(REQUEST_TEXT));
-            String photo = c.getString(c.getColumnIndex(REQUEST_PHOTO));
-            int userid = c.getInt(c.getColumnIndex(REQUEST_USER_CREATED_ID));
-            long time = c.getLong(c.getColumnIndex(REQUEST_TIME_CREATED));
-            User user = getUserById(userid);
-            Request request;
-            if (photo != null) {
-                request = new Request(id, user, title, text, photo, time);
-            } else {
-                request = new Request(id, user, title, text, time);
+        ArrayList<Request>requests=new ArrayList<>();
+        try{
+            String url=PATH+"GetAllRequests";
+            MyJsonTask task = new MyJsonTask();
+            task.execute(url);
+            String result = task.get();
+            JSONObject jsonObject = new JSONObject(result);
+            JSONArray arr = jsonObject.getJSONArray("requests");
+            for (int i = 0; i < arr.length(); i++){
+                JSONObject object=arr.getJSONObject(i);
+                String title=null, text=null, photo=null;
+                long time=0; int id=0, userId=0;
+                try {
+                    title=object.getString("title");
+                    text=object.getString("text");
+                    time=object.getLong("time");
+                    id=object.getInt("id");
+                    userId=object.getInt("userId");
+                    photo=object.getString("photo");
+                }catch (Exception e){}
+                User user=getUserById(userId);
+                Request r;
+                if (photo==null){
+                     r=new Request(id, user, title, text, time);
+                }else {
+                     r=new Request(id, user, title, text, photo, time);
+                }
+                requests.add(r);
             }
-            requests.add(request);
+            return requests;
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        c.close();
-        return requests;
+        return null;
     }
 
     public ArrayList<Request> getAllUserRequests(User user) {
-        ArrayList<Request> requests = new ArrayList<>();
-        SQLiteDatabase database = getReadableDatabase();
-        String sql = "Select * from " + TABLE_REQUESTS + " where " + REQUEST_USER_CREATED_ID + "=" +
-                user.getId() + " ORDER BY "
-                + KEY_ID_REQUESTS + " DESC";
-        Cursor c = database.rawQuery(sql, null);
-        while (c.moveToNext()) {
-            int index = c.getColumnIndex(KEY_ID_REQUESTS);
-            int id = c.getInt(index);
-            String photo = c.getString(c.getColumnIndex(REQUEST_PHOTO));
-            String title = c.getString(c.getColumnIndex(REQUEST_TITLE));
-            String text = c.getString(c.getColumnIndex(REQUEST_TEXT));
-            long time = c.getLong(c.getColumnIndex(REQUEST_TIME_CREATED));
-            Request request;
-            if (photo != null) {
-                request = new Request(id, user, title, text, photo, time);
-            } else {
-                request = new Request(id, user, title, text, time);
+        ArrayList<Request>requests=new ArrayList<>();
+        try{
+            String url=PATH+"GetAllUserRequests?userId="+user.getId();
+            MyJsonTask task = new MyJsonTask();
+            task.execute(url);
+            String result = task.get();
+            JSONObject jsonObject = new JSONObject(result);
+            JSONArray arr = jsonObject.getJSONArray("requests");
+            for (int i = 0; i < arr.length(); i++){
+                JSONObject object=arr.getJSONObject(i);
+                String title=null, text=null, photo=null;
+                long time=0; int id=0;
+                try {
+                    title=object.getString("title");
+                    text=object.getString("text");
+                    time=object.getLong("time");
+                    id=object.getInt("id");
+                    photo=object.getString("photo");
+                }catch (Exception e){}
+                Request r;
+                if (photo==null){
+                    r=new Request(id, user, title, text, time);
+                }else {
+                    r=new Request(id, user, title, text, photo, time);
+                }
+                requests.add(r);
             }
-            requests.add(request);
+            return requests;
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        c.close();
-        return requests;
+        return null;
     }
 
     public void deleteRequest(Request r) {
-        SQLiteDatabase database = getWritableDatabase();
-        int id = r.getId();
-        String sql = "delete from " + TABLE_REQUESTS + " where " + KEY_ID_REQUESTS + "=" + id;
-        database.execSQL(sql);
+        try {
+            URL url=new URL(PATH+"DeleteRequest");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", r.getId());
+            OutputStream os = con.getOutputStream();
+            byte[] input = jsonObject.toString().getBytes("utf-8");
+            os.write(input);
+            os.flush();
+            os.close();
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public Request getRequestById(int id) {
-        SQLiteDatabase database = getReadableDatabase();
-        String sql = "select * from " + TABLE_REQUESTS + " where " + KEY_ID_REQUESTS + "=" + id;
-        Cursor c = database.rawQuery(sql, null);
-        if (c.moveToFirst()) {
-            String title = c.getString(c.getColumnIndex(REQUEST_TITLE));
-            String photo = c.getString(c.getColumnIndex(REQUEST_PHOTO));
-            String text = c.getString(c.getColumnIndex(REQUEST_TEXT));
-            int userid = c.getInt(c.getColumnIndex(REQUEST_USER_CREATED_ID));
-            long time = c.getLong(c.getColumnIndex(REQUEST_TIME_CREATED));
-            User user = getUserById(userid);
-            Request request;
-            if (photo != null) {
-                request = new Request(id, user, title, text, photo, time);
-            } else {
-                request = new Request(id, user, title, text, time);
-            }
-            return request;
+        String title=null, text=null, photo=null;
+        long time=0; int userId=0;
+        try {
+            String url = PATH + "GetRequestById?id=" + id;
+            MyJsonTask task = new MyJsonTask();
+            task.execute(url);
+            String result = task.get();
+            JSONObject object = new JSONObject(result);
+            title=object.getString("title");
+            text=object.getString("text");
+            time=object.getLong("time");
+            id=object.getInt("id");
+            photo=object.getString("photo");
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        return null;
+        Request r;
+        User user=getUserById(userId);
+        if (photo==null){
+            r=new Request(id, user, title, text, time);
+        }else {
+            r=new Request(id, user, title, text, photo, time);
+        }
+        return r;
     }
 
     public void updateRequest(Request request) {
-        SQLiteDatabase database = getWritableDatabase();
-        String title = request.getTitle();
-        String text = request.getText();
-        String photo = request.getPhotoAsString();
-        String sql;
-        if (photo != null) {
-            sql = "update " + TABLE_REQUESTS + " set " + REQUEST_TITLE + "='" + title + "', " + REQUEST_TEXT
-                    + "='" + text + "', " + REQUEST_PHOTO + "='" + photo + "'" + " where " + KEY_ID_REQUESTS + "=" + request.getId();
-        } else {
-            sql = "update " + TABLE_REQUESTS + " set " + REQUEST_TITLE + "='" + title + "', " + REQUEST_TEXT
-                    + "='" + text + "' where " + KEY_ID_REQUESTS + "=" + request.getId();
+        try {
+            URL url=new URL(PATH+"UpdateRequest");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", request.getId());
+            jsonObject.put("userId", request.getUser().getId());
+            jsonObject.put("title", request.getTitle());
+            jsonObject.put("text", request.getText());
+            if (request.getPhotoAsString()!=null){
+                jsonObject.put("photo", request.getPhotoAsString());
+            }
+            jsonObject.put("time", request.getTime_created());
+            OutputStream os = con.getOutputStream();
+            byte[] input = jsonObject.toString().getBytes("utf-8");
+            os.write(input);
+            os.flush();
+            os.close();
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        database.execSQL(sql);
     }
 
     public void addNews(News news) {
-        SQLiteDatabase database = getWritableDatabase();
-        String title = news.getTitle();
-        String text = news.getText();
-        String photo = news.getPhotoAsString();
-        long time = news.getTime_created();
-        if (photo != null) {
-            contentValues.put(NEWS_PHOTO, photo);
+        try {
+            URL url=new URL(PATH+"AddNewsAPI");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", news.getId());
+            jsonObject.put("title", news.getTitle());
+            jsonObject.put("text", news.getText());
+            if (news.getPhotoAsString()!=null){
+                jsonObject.put("photo", news.getPhotoAsString());
+            }
+            jsonObject.put("time", news.getTime_created());
+            OutputStream os = con.getOutputStream();
+            byte[] input = jsonObject.toString().getBytes("utf-8");
+            os.write(input);
+            os.flush();
+            os.close();
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        contentValues.put(NEWS_TITLE, title);
-        contentValues.put(NEWS_TEXT, text);
-        contentValues.put(NEWS_TIME_CREATED, time);
-        database.insert(TABLE_NEWS, null, contentValues);
-        contentValues.clear();
     }
 
     public News getNewsById(int id) {
-        SQLiteDatabase database = getReadableDatabase();
-        String sql = "select * from " + TABLE_NEWS + " where " + KEY_ID_NEWS + "=" + id;
-        Cursor c = database.rawQuery(sql, null);
-        if (c.moveToFirst()) {
-            String title = c.getString(1);
-            String text = c.getString(2);
-            String photo = c.getString(3);
-            long time = c.getLong(4);
-            News news;
-            if (photo != null) {
-                news = new News(id, title, text, photo, time);
-            } else {
-                news = new News(id, title, text, time);
-            }
-
-            return news;
+        String title=null, text=null, photo=null;
+        long time=0;
+        try {
+            String url = PATH + "GetNewsById?id=" + id;
+            MyJsonTask task = new MyJsonTask();
+            task.execute(url);
+            String result = task.get();
+            JSONObject object = new JSONObject(result);
+            title=object.getString("title");
+            text=object.getString("text");
+            time=object.getLong("time");
+            photo=object.getString("photo");
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        return null;
     }
 
     public ArrayList<News> getAllNews() {
         ArrayList<News> news = new ArrayList<>();
-        SQLiteDatabase database = getReadableDatabase();
-        String sql = "select * from " + TABLE_NEWS + " order by " + KEY_ID_NEWS + " desc";
-        Cursor c;
-        c = database.rawQuery(sql, null);
-        while (c.moveToNext()) {
-            int id = c.getInt(c.getColumnIndex(KEY_ID_NEWS));
-            String title = c.getString(c.getColumnIndex(NEWS_TITLE));
-            String text = c.getString(2);//а тут только в 1 месте
-            String photo = c.getString(c.getColumnIndex(NEWS_PHOTO));
-            long time = c.getLong(c.getColumnIndex(NEWS_TIME_CREATED));
-            News n;
-            if (photo != null) {
-                n = new News(id, title, text, photo, time);
-            } else {
-                n = new News(id, title, text, time);
+        try{
+            String url=PATH+"GetAllNews";
+            MyJsonTask task = new MyJsonTask();
+            task.execute(url);
+            String result = task.get();
+            JSONObject jsonObject = new JSONObject(result);
+            JSONArray arr = jsonObject.getJSONArray("news");
+            for (int i = 0; i < arr.length(); i++){
+                JSONObject object=arr.getJSONObject(i);
+                String title=null, text=null, photo=null;
+                long time=0; int id=0;
+                try {
+                    title=object.getString("title");
+                    text=object.getString("text");
+                    time=object.getLong("time");
+                    id=object.getInt("id");
+                    photo=object.getString("photo");
+                }catch (Exception e){}
+                news.add(new News(id, title, text, photo, time));
             }
-            news.add(n);
+            return news;
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        c.close();
-        return news;
+        return null;
     }
 
     public void deleteNews(News news) {
-        SQLiteDatabase database = getWritableDatabase();
-        int id = news.getId();
-        String sql = "delete from " + TABLE_NEWS + " where " + KEY_ID_NEWS + "=" + id;
-        database.execSQL(sql);
+        try {
+            URL url=new URL(PATH+"DeleteNews");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", news.getId());
+            OutputStream os = con.getOutputStream();
+            byte[] input = jsonObject.toString().getBytes("utf-8");
+            os.write(input);
+            os.flush();
+            os.close();
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void addToHistory(History history) {
@@ -440,43 +557,101 @@ public class DBhelper extends SQLiteOpenHelper {
             eventType = 2;
             eventId = history.getNews().getId();
         } else return;
-        SQLiteDatabase database = getWritableDatabase();
-        contentValues.put(HISTORY_EVENT_ID, eventId);
-        contentValues.put(HISTORY_EVENT_TYPE_ID, eventType);
-        contentValues.put(HISTORY_USER_CREATED_ID, userId);
-        database.insert(TABLE_HISTORY, null, contentValues);
-        contentValues.clear();
+        try {
+            URL url=new URL(PATH+"AddToHistory");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+            OutputStream os = con.getOutputStream();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("userId", userId);
+            jsonObject.put("eventType", eventType);
+            jsonObject.put("eventId", eventId);
+            byte[] input = jsonObject.toString().getBytes("utf-8");
+            os.write(input);
+            os.flush();
+            os.close();
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<History> getAllUserHistory() {
         ArrayList<History> histories = new ArrayList<>();
-        SQLiteDatabase database = getReadableDatabase();
-        int userId = getCurrentUser().getId();
-        String sql = "select * from " + TABLE_HISTORY + " where " + HISTORY_USER_CREATED_ID + " = " + userId + " order by " +
-                KEY_ID_HISTORY + " desc";
-        Cursor cursor = database.rawQuery(sql, null);
-        while (cursor.moveToNext()) {
-            int id = cursor.getInt(cursor.getColumnIndex(KEY_ID_HISTORY));
-            int eventType = cursor.getInt(cursor.getColumnIndex(HISTORY_EVENT_TYPE_ID));
-            int eventId = cursor.getInt(cursor.getColumnIndex(HISTORY_EVENT_ID));
-            if (eventType == 1) {
-                Request request = getRequestById(eventId);
-                History history = new History(id, getCurrentUser(), request);
-                histories.add(history);
-            } else if (eventType == 2) {
-                News news = getNewsById(eventId);
-                History history = new History(id, getCurrentUser(), news);
-                histories.add(history);
+        User user=getCurrentUser();
+        try{
+            String url=PATH+"GetAllUserHistory?userId="+user.getId();
+            MyJsonTask task = new MyJsonTask();
+            task.execute(url);
+            String result = task.get();
+            JSONObject jsonObject = new JSONObject(result);
+            JSONArray arr = jsonObject.getJSONArray("history");
+            for (int i = 0; i < arr.length(); i++){
+                JSONObject object=arr.getJSONObject(i);
+                int eventType=object.getInt("eventType");
+                int eventId=object.getInt("eventId");
+                int id=object.getInt("id");
+                if (eventType==1){
+                    Request r=getRequestById(eventId);
+                    histories.add(new History(id, user, r));
+                } else if(eventType==2){
+                    News n=getNewsById(eventId);
+                    histories.add(new History(id, user, n));
+                }
             }
+            return histories;
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        return histories;
+        return null;
     }
 
     public void deleteFromHistory(History history) {
-        SQLiteDatabase database = getWritableDatabase();
-        int id = history.getUser_opened().getId();
-        String sql = "delete from " + TABLE_HISTORY + " where " + HISTORY_USER_CREATED_ID + "=" + id;
-        database.execSQL(sql);
+        int eventType=0;
+        int eventId=0;
+        int userId=history.getUser_opened().getId();
+        if (history.getRequest()!=null){
+            eventType=1;
+            eventId=history.getRequest().getId();
+        }else if (history.getNews()!=null){
+            eventType=2;
+            eventId=history.getNews().getId();
+        }
+        try {
+            URL url=new URL(PATH+"DeleteFromHistory");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("eventType", eventType);
+            jsonObject.put("eventId", eventId);
+            jsonObject.put("userId", userId);
+            OutputStream os = con.getOutputStream();
+            byte[] input = jsonObject.toString().getBytes("utf-8");
+            os.write(input);
+            os.flush();
+            os.close();
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void createNewChat(User user1, User user2) {
@@ -541,16 +716,6 @@ public class DBhelper extends SQLiteOpenHelper {
         }
         return messages;
     }
-
-   /* public boolean checkIfChatAlreadyExists(User u1, User u2){
-        SQLiteDatabase database=getReadableDatabase();
-        int u1Id=u1.getId();
-        int u2Id=u2.getId();
-        String sql="select * from "+TABLE_CHATS+" where "+CHATS_USER_1+"="+u1Id+" and "+CHATS_USER_2+"="+u2Id+
-                " or "+CHATS_USER_1+"="+u2Id+" and "+CHATS_USER_2+"="+u1Id;
-        Cursor c=database.rawQuery(sql, null);
-        return c.moveToFirst();
-    }*/
 
     public Chat getChatByTwoUsers(User u1, User u2) {
         SQLiteDatabase database = getReadableDatabase();
@@ -617,5 +782,56 @@ public class DBhelper extends SQLiteOpenHelper {
         int toId = to.getId();
         String sql = "delete from " + TABLE_LIKES + " where " + LIKE_FROM + "=" + fromId + " and " + LIKE_TO + "=" + toId;
         database.execSQL(sql);
+    }
+
+    private class MyJsonTask extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+
+            try {
+                URL url = new URL(params[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+
+                InputStream stream = connection.getInputStream();
+
+                reader = new BufferedReader(new InputStreamReader(stream));
+
+                String buffer = "";
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    buffer += (line + "\n");
+                }
+                return buffer;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) {
+                connection.disconnect();
+            }
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+        }
     }
 }
