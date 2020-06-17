@@ -85,8 +85,8 @@ public class DBhelper {
 
 
     public User getUserById(int id) {
-        String firstname=null, surname=null, passwd=null, email=null, avatar=null;
-        long time=0;
+        String firstname = null, surname = null, passwd = null, email = null, avatar = null;
+        long time = 0;
         try {
             String url = PATH + "GetUserById?id=" + id;
             MyJsonTask task = new MyJsonTask();
@@ -104,19 +104,19 @@ public class DBhelper {
         }
         User u;
         if (avatar == null) {
-         u = new User(id, firstname, surname, passwd, email, time);
-    } else {
+            u = new User(id, firstname, surname, passwd, email, time);
+        } else {
             u = new User(id, firstname, surname, passwd, email, time, avatar);
         }
         return u;
     }
 
     public User getUserByEmailAndPassword(String email, String password) {
-        String firstname=null, surname=null, avatar=null;
-        long time=0;
-        int id=-1;
+        String firstname = null, surname = null, avatar = null;
+        long time = 0;
+        int id = -1;
         try {
-            String url = PATH + "GetUserByEmailAndPassword?email=" + email+"&password="+password;
+            String url = PATH + "GetUserByEmailAndPassword?email=" + email + "&password=" + password;
             MyJsonTask task = new MyJsonTask();
             task.execute(url);
             String result = task.get();
@@ -124,7 +124,7 @@ public class DBhelper {
             firstname = jsonObject.getString("firstname");
             surname = jsonObject.getString("surname");
             time = jsonObject.getLong("time");
-            id=jsonObject.getInt("id");
+            id = jsonObject.getInt("id");
             avatar = jsonObject.getString("avatar");
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -140,7 +140,7 @@ public class DBhelper {
 
     public void addUser(User u) {
         try {
-            URL url=new URL(PATH+"AddUser");
+            URL url = new URL(PATH + "AddUser");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -174,7 +174,7 @@ public class DBhelper {
 
     public void updateUserProfile(User u) {
         try {
-            URL url=new URL(PATH+"UpdateUserProfile");
+            URL url = new URL(PATH + "UpdateUserProfile");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -232,14 +232,14 @@ public class DBhelper {
     }
 
     public boolean checkIfUserExists(String email, String password) {
-        try{
-            String url = PATH + "CheckIfUserExists?email=" + email+"&password="+password;
+        try {
+            String url = PATH + "CheckIfUserExists?email=" + email + "&password=" + password;
             MyJsonTask task = new MyJsonTask();
             task.execute(url);
             String result = task.get();
             JSONObject jsonObject = new JSONObject(result);
             return jsonObject.getBoolean("check");
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -247,7 +247,7 @@ public class DBhelper {
 
     public void addRequest(Request request) {
         try {
-            URL url=new URL(PATH+"AddRequest");
+            URL url = new URL(PATH + "AddRequest");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -258,7 +258,7 @@ public class DBhelper {
             jsonObject.put("userId", request.getUser().getId());
             jsonObject.put("title", request.getTitle());
             jsonObject.put("text", request.getText());
-            if (request.getPhotoAsString()!=null){
+            if (request.getPhotoAsString() != null) {
                 jsonObject.put("photo", request.getPhotoAsString());
             }
             jsonObject.put("time", request.getTime_created());
@@ -280,72 +280,76 @@ public class DBhelper {
     }
 
     public ArrayList<Request> getAllRequests() {
-        ArrayList<Request>requests=new ArrayList<>();
-        try{
-            String url=PATH+"GetAllRequests";
+        ArrayList<Request> requests = new ArrayList<>();
+        try {
+            String url = PATH + "GetAllRequests";
             MyJsonTask task = new MyJsonTask();
             task.execute(url);
             String result = task.get();
             JSONObject jsonObject = new JSONObject(result);
             JSONArray arr = jsonObject.getJSONArray("requests");
-            for (int i = 0; i < arr.length(); i++){
-                JSONObject object=arr.getJSONObject(i);
-                String title=null, text=null, photo=null;
-                long time=0; int id=0, userId=0;
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject object = arr.getJSONObject(i);
+                String title = null, text = null, photo = null;
+                long time = 0;
+                int id = 0, userId = 0;
                 try {
-                    title=object.getString("title");
-                    text=object.getString("text");
-                    time=object.getLong("time");
-                    id=object.getInt("id");
-                    userId=object.getInt("userId");
-                    photo=object.getString("photo");
-                }catch (Exception e){}
-                User user=getUserById(userId);
+                    title = object.getString("title");
+                    text = object.getString("text");
+                    time = object.getLong("time");
+                    id = object.getInt("id");
+                    userId = object.getInt("userId");
+                    photo = object.getString("photo");
+                } catch (Exception e) {
+                }
+                User user = getUserById(userId);
                 Request r;
-                if (photo==null){
-                     r=new Request(id, user, title, text, time);
-                }else {
-                     r=new Request(id, user, title, text, photo, time);
+                if (photo == null) {
+                    r = new Request(id, user, title, text, time);
+                } else {
+                    r = new Request(id, user, title, text, photo, time);
                 }
                 requests.add(r);
             }
             return requests;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
     public ArrayList<Request> getAllUserRequests(User user) {
-        ArrayList<Request>requests=new ArrayList<>();
-        try{
-            String url=PATH+"GetAllUserRequests?userId="+user.getId();
+        ArrayList<Request> requests = new ArrayList<>();
+        try {
+            String url = PATH + "GetAllUserRequests?userId=" + user.getId();
             MyJsonTask task = new MyJsonTask();
             task.execute(url);
             String result = task.get();
             JSONObject jsonObject = new JSONObject(result);
             JSONArray arr = jsonObject.getJSONArray("requests");
-            for (int i = 0; i < arr.length(); i++){
-                JSONObject object=arr.getJSONObject(i);
-                String title=null, text=null, photo=null;
-                long time=0; int id=0;
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject object = arr.getJSONObject(i);
+                String title = null, text = null, photo = null;
+                long time = 0;
+                int id = 0;
                 try {
-                    title=object.getString("title");
-                    text=object.getString("text");
-                    time=object.getLong("time");
-                    id=object.getInt("id");
-                    photo=object.getString("photo");
-                }catch (Exception e){}
+                    title = object.getString("title");
+                    text = object.getString("text");
+                    time = object.getLong("time");
+                    id = object.getInt("id");
+                    photo = object.getString("photo");
+                } catch (Exception e) {
+                }
                 Request r;
-                if (photo==null){
-                    r=new Request(id, user, title, text, time);
-                }else {
-                    r=new Request(id, user, title, text, photo, time);
+                if (photo == null) {
+                    r = new Request(id, user, title, text, time);
+                } else {
+                    r = new Request(id, user, title, text, photo, time);
                 }
                 requests.add(r);
             }
             return requests;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -353,7 +357,7 @@ public class DBhelper {
 
     public void deleteRequest(Request r) {
         try {
-            URL url=new URL(PATH+"DeleteRequest");
+            URL url = new URL(PATH + "DeleteRequest");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -379,35 +383,36 @@ public class DBhelper {
     }
 
     public Request getRequestById(int id) {
-        String title=null, text=null, photo=null;
-        long time=0; int userId=0;
+        String title = null, text = null, photo = null;
+        long time = 0;
+        int userId = 0;
         try {
             String url = PATH + "GetRequestById?id=" + id;
             MyJsonTask task = new MyJsonTask();
             task.execute(url);
             String result = task.get();
             JSONObject object = new JSONObject(result);
-            title=object.getString("title");
-            text=object.getString("text");
-            time=object.getLong("time");
-            id=object.getInt("id");
-            photo=object.getString("photo");
+            title = object.getString("title");
+            text = object.getString("text");
+            time = object.getLong("time");
+            id = object.getInt("id");
+            photo = object.getString("photo");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         Request r;
-        User user=getUserById(userId);
-        if (photo==null){
-            r=new Request(id, user, title, text, time);
-        }else {
-            r=new Request(id, user, title, text, photo, time);
+        User user = getUserById(userId);
+        if (photo == null) {
+            r = new Request(id, user, title, text, time);
+        } else {
+            r = new Request(id, user, title, text, photo, time);
         }
         return r;
     }
 
     public void updateRequest(Request request) {
         try {
-            URL url=new URL(PATH+"UpdateRequest");
+            URL url = new URL(PATH + "UpdateRequest");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -418,7 +423,7 @@ public class DBhelper {
             jsonObject.put("userId", request.getUser().getId());
             jsonObject.put("title", request.getTitle());
             jsonObject.put("text", request.getText());
-            if (request.getPhotoAsString()!=null){
+            if (request.getPhotoAsString() != null) {
                 jsonObject.put("photo", request.getPhotoAsString());
             }
             jsonObject.put("time", request.getTime_created());
@@ -441,7 +446,7 @@ public class DBhelper {
 
     public void addNews(News news) {
         try {
-            URL url=new URL(PATH+"AddNewsAPI");
+            URL url = new URL(PATH + "AddNewsAPI");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -451,7 +456,7 @@ public class DBhelper {
             jsonObject.put("id", news.getId());
             jsonObject.put("title", news.getTitle());
             jsonObject.put("text", news.getText());
-            if (news.getPhotoAsString()!=null){
+            if (news.getPhotoAsString() != null) {
                 jsonObject.put("photo", news.getPhotoAsString());
             }
             jsonObject.put("time", news.getTime_created());
@@ -473,47 +478,52 @@ public class DBhelper {
     }
 
     public News getNewsById(int id) {
-        String title=null, text=null, photo=null;
-        long time=0;
+        String title = null, text = null, photo = null;
+        long time = 0;
         try {
             String url = PATH + "GetNewsById?id=" + id;
             MyJsonTask task = new MyJsonTask();
             task.execute(url);
             String result = task.get();
             JSONObject object = new JSONObject(result);
-            title=object.getString("title");
-            text=object.getString("text");
-            time=object.getLong("time");
-            photo=object.getString("photo");
+            title = object.getString("title");
+            text = object.getString("text");
+            time = object.getLong("time");
+            photo = object.getString("photo");
+            News n = new News(id, title, text, photo, time);
+            return n;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        return null;
     }
 
     public ArrayList<News> getAllNews() {
         ArrayList<News> news = new ArrayList<>();
-        try{
-            String url=PATH+"GetAllNews";
+        try {
+            String url = PATH + "GetAllNews";
             MyJsonTask task = new MyJsonTask();
             task.execute(url);
             String result = task.get();
             JSONObject jsonObject = new JSONObject(result);
             JSONArray arr = jsonObject.getJSONArray("news");
-            for (int i = 0; i < arr.length(); i++){
-                JSONObject object=arr.getJSONObject(i);
-                String title=null, text=null, photo=null;
-                long time=0; int id=0;
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject object = arr.getJSONObject(i);
+                String title = null, text = null, photo = null;
+                long time = 0;
+                int id = 0;
                 try {
-                    title=object.getString("title");
-                    text=object.getString("text");
-                    time=object.getLong("time");
-                    id=object.getInt("id");
-                    photo=object.getString("photo");
-                }catch (Exception e){}
+                    title = object.getString("title");
+                    text = object.getString("text");
+                    time = object.getLong("time");
+                    id = object.getInt("id");
+                    photo = object.getString("photo");
+                } catch (Exception e) {
+                }
                 news.add(new News(id, title, text, photo, time));
             }
             return news;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -521,7 +531,7 @@ public class DBhelper {
 
     public void deleteNews(News news) {
         try {
-            URL url=new URL(PATH+"DeleteNews");
+            URL url = new URL(PATH + "DeleteNews");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -558,7 +568,7 @@ public class DBhelper {
             eventId = history.getNews().getId();
         } else return;
         try {
-            URL url=new URL(PATH+"AddToHistory");
+            URL url = new URL(PATH + "AddToHistory");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -587,47 +597,47 @@ public class DBhelper {
 
     public ArrayList<History> getAllUserHistory() {
         ArrayList<History> histories = new ArrayList<>();
-        User user=getCurrentUser();
-        try{
-            String url=PATH+"GetAllUserHistory?userId="+user.getId();
+        User user = getCurrentUser();
+        try {
+            String url = PATH + "GetAllUserHistory?userId=" + user.getId();
             MyJsonTask task = new MyJsonTask();
             task.execute(url);
             String result = task.get();
             JSONObject jsonObject = new JSONObject(result);
             JSONArray arr = jsonObject.getJSONArray("history");
-            for (int i = 0; i < arr.length(); i++){
-                JSONObject object=arr.getJSONObject(i);
-                int eventType=object.getInt("eventType");
-                int eventId=object.getInt("eventId");
-                int id=object.getInt("id");
-                if (eventType==1){
-                    Request r=getRequestById(eventId);
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject object = arr.getJSONObject(i);
+                int eventType = object.getInt("eventType");
+                int eventId = object.getInt("eventId");
+                int id = object.getInt("id");
+                if (eventType == 1) {
+                    Request r = getRequestById(eventId);
                     histories.add(new History(id, user, r));
-                } else if(eventType==2){
-                    News n=getNewsById(eventId);
+                } else if (eventType == 2) {
+                    News n = getNewsById(eventId);
                     histories.add(new History(id, user, n));
                 }
             }
             return histories;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
     public void deleteFromHistory(History history) {
-        int eventType=0;
-        int eventId=0;
-        int userId=history.getUser_opened().getId();
-        if (history.getRequest()!=null){
-            eventType=1;
-            eventId=history.getRequest().getId();
-        }else if (history.getNews()!=null){
-            eventType=2;
-            eventId=history.getNews().getId();
+        int eventType = 0;
+        int eventId = 0;
+        int userId = history.getUser_opened().getId();
+        if (history.getRequest() != null) {
+            eventType = 1;
+            eventId = history.getRequest().getId();
+        } else if (history.getNews() != null) {
+            eventType = 2;
+            eventId = history.getNews().getId();
         }
         try {
-            URL url=new URL(PATH+"DeleteFromHistory");
+            URL url = new URL(PATH + "DeleteFromHistory");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -655,133 +665,230 @@ public class DBhelper {
     }
 
     public void createNewChat(User user1, User user2) {
-        SQLiteDatabase database = getWritableDatabase();
-        int id1 = user1.getId();
-        int id2 = user2.getId();
-        contentValues.put(CHATS_USER_1, id1);
-        contentValues.put(CHATS_USER_2, id2);
-        database.insert(TABLE_CHATS, null, contentValues);
-        contentValues.clear();
+        try {
+            URL url = new URL(PATH + "CreateNewChat");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+            OutputStream os = con.getOutputStream();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("user1", user1.getId());
+            jsonObject.put("user2", user2.getId());
+            byte[] input = jsonObject.toString().getBytes("utf-8");
+            os.write(input);
+            os.flush();
+            os.close();
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<Chat> getAllCurrentUserChats() {
-        SQLiteDatabase database = getReadableDatabase();
         ArrayList<Chat> chats = new ArrayList<>();
-        int userid = getCurrentUser().getId();
-        String sql = "select * from " + TABLE_CHATS + " where " + CHATS_USER_1 + "=" + userid + " or " + CHATS_USER_2 + "=" + userid;
-        Cursor c = database.rawQuery(sql, null);
-        while (c.moveToNext()) {
-            int id = c.getInt(c.getColumnIndex(KEY_ID_CHATS));
-            int user1id = c.getInt(c.getColumnIndex(CHATS_USER_1));
-            int user2id = c.getInt(c.getColumnIndex(CHATS_USER_2));
-            User u1 = getUserById(user1id);
-            User u2 = getUserById(user2id);
-            Chat chat = new Chat(id, u1, u2);
-            chats.add(chat);
+        User user1 = getCurrentUser();
+        try {
+            String url = PATH + "GetAllUserChats?userId=" + user1.getId();
+            MyJsonTask task = new MyJsonTask();
+            task.execute(url);
+            String result = task.get();
+            JSONObject jsonObject = new JSONObject(result);
+            JSONArray arr = jsonObject.getJSONArray("chats");
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject object = arr.getJSONObject(i);
+                int user2Id = object.getInt("user2Id");  //у меня уже есть currentUser, значит можно передавать только одного
+                int id = object.getInt("id");
+                User user2 = getUserById(user2Id);
+                chats.add(new Chat(id, user1, user2));
+            }
+            return chats;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return chats;
+        return null;
     }
 
     public Chat getChatById(int id) {
-        SQLiteDatabase database = getReadableDatabase();
-        String sql = "select * from " + TABLE_CHATS + " where " + KEY_ID_CHATS + "=" + id;
-        Cursor c = database.rawQuery(sql, null);
-        if (c.moveToFirst()) {
-            int chatId = c.getInt(c.getColumnIndex(KEY_ID_CHATS));
-            User u1 = getUserById(c.getInt(c.getColumnIndex(CHATS_USER_1)));
-            User u2 = getUserById(c.getInt(c.getColumnIndex(CHATS_USER_2)));
-            return new Chat(chatId, u1, u2);
+        try {
+            String url = PATH + "GetChatById?id=" + id;
+            MyJsonTask task = new MyJsonTask();
+            task.execute(url);
+            String result = task.get();
+            JSONObject object = new JSONObject(result);
+            int user1Id = object.getInt("user1Id");
+            int user2Id = object.getInt("user2Id");
+            User user1 = getUserById(user1Id);
+            User user2 = getUserById(user2Id);
+            return new Chat(id, user1, user2);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
         return null;
     }
 
     public ArrayList<Message> getAllChatMessages(Chat ch) {
-        SQLiteDatabase database = getReadableDatabase();
         ArrayList<Message> messages = new ArrayList<>();
-        int chatId = ch.getId();
-        String sql = "select * from " + TABLE_MESSAGES + " where " + MESSAGES_CHAT_ID + "=" + chatId +
-                " order by " + MESSAGE_TIME_CREATED + " asc";
-        Cursor c = database.rawQuery(sql, null);
-        while (c.moveToNext()) {
-            int chId = c.getInt(c.getColumnIndex(MESSAGES_CHAT_ID));
-            int uFrom = c.getInt(c.getColumnIndex(MESSAGE_FROM));
-            int uTo = c.getInt(c.getColumnIndex(MESSAGE_TO));
-            String text = c.getString(c.getColumnIndex(MESSAGE_TEXT));
-            long time = c.getLong(c.getColumnIndex(MESSAGE_TIME_CREATED));
-            Chat chat = getChatById(chId);
-            User userFrom = getUserById(uFrom);
-            User userTo = getUserById(uTo);
-            Message message = new Message(chat, userFrom, userTo, text, time);
-            messages.add(message);
+        try {
+            String url = PATH + "GetAllChatMessages?chatId=" + ch.getId();
+            MyJsonTask task = new MyJsonTask();
+            task.execute(url);
+            String result = task.get();
+            JSONObject jsonObject = new JSONObject(result);
+            JSONArray arr = jsonObject.getJSONArray("messages");
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject object = arr.getJSONObject(i);
+                User userFrom, userTo;
+                String text=object.getString("text");
+                long time_created=object.getLong("time");
+                int userFromId=object.getInt("userFromId");
+                int userToId=object.getInt("userToId");
+                userFrom=getUserById(userFromId);
+                userTo=getUserById(userToId);
+                messages.add(new Message(ch, userFrom, userTo, text, time_created));
+            }
+            return messages;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return messages;
+        return null;
     }
 
     public Chat getChatByTwoUsers(User u1, User u2) {
-        SQLiteDatabase database = getReadableDatabase();
-        int u1Id = u1.getId();
-        int u2Id = u2.getId();
-        String sql = "select * from " + TABLE_CHATS + " where " + CHATS_USER_1 + "=" + u1Id + " and " + CHATS_USER_2 + "=" + u2Id +
-                " or " + CHATS_USER_1 + "=" + u2Id + " and " + CHATS_USER_2 + "=" + u1Id;
-        Cursor c = database.rawQuery(sql, null);
-        if (c.moveToFirst()) {
-            int id = c.getInt(c.getColumnIndex(KEY_ID_CHATS));
-            User user1 = getUserById(u1Id);
-            User user2 = getUserById(u2Id);
-            Chat chat = new Chat(id, user1, user2);
-            return chat;
+        try {
+            String url = PATH + "GetChatByTwoUsers?user1=" + u1.getId() + "&user2=" + u2.getId();
+            MyJsonTask task = new MyJsonTask();
+            task.execute(url);
+            String result = task.get();
+            JSONObject object = new JSONObject(result);
+            int id=object.getInt("id");
+            return new Chat(id, u1, u2);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
         return null;
     }
 
     public void createNewMessage(Message m) {
-        SQLiteDatabase database = getWritableDatabase();
-        int chatId = m.getChat().getId();
-        int uFromId = m.getUserFrom().getId();
-        int uToId = m.getUserTo().getId();
-        String text = m.getText();
-        long time = m.getTime_created();
-        String sql = "insert into " + TABLE_MESSAGES + " ( " + MESSAGES_CHAT_ID + ", " + MESSAGE_FROM + ", " + MESSAGE_TO +
-                ", " + MESSAGE_TEXT + ", " + MESSAGE_TIME_CREATED + ") values ( " + chatId + ", " + uFromId + ", " +
-                uToId + ", '" + text + "', " + time + " )";
-        database.execSQL(sql);
+        try {
+            URL url = new URL(PATH + "CreateNewMessage");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+            OutputStream os = con.getOutputStream();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("chatId", m.getChat().getId());
+            jsonObject.put("userFrom", m.getUserFrom().getId());
+            jsonObject.put("userTo", m.getUserTo().getId());
+            jsonObject.put("text", m.getText());
+            jsonObject.put("time", m.getTime_created());
+            byte[] input = jsonObject.toString().getBytes("utf-8");
+            os.write(input);
+            os.flush();
+            os.close();
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean checkIfAlreadyLiked(User from, User to) {
-        SQLiteDatabase database = getReadableDatabase();
-        int fromId = from.getId();
-        int toId = to.getId();
-        String sql = "select * from " + TABLE_LIKES + " where " + LIKE_FROM + "=" + fromId + " and " + LIKE_TO + "=" + toId;
-        Cursor c = database.rawQuery(sql, null);
-        return c.moveToFirst();
+        try {
+            String url = PATH + "CheckIfAlreadyLiked?userFrom=" + from.getId() + "&userTo=" + to.getId();
+            MyJsonTask task = new MyJsonTask();
+            task.execute(url);
+            String result = task.get();
+            JSONObject jsonObject = new JSONObject(result);
+            return jsonObject.getBoolean("check");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public int likeCount(User user) {
-        SQLiteDatabase database = getReadableDatabase();
-        int userId = user.getId();
-        String sql = "select count(*) from " + TABLE_LIKES + " where " + LIKE_TO + "=" + userId;
-        Cursor c = database.rawQuery(sql, null);
-        if (c.moveToFirst()) {
-            return c.getInt(0);
+        try {
+            String url = PATH + "LikeCount?userId=" + user.getId();
+            MyJsonTask task = new MyJsonTask();
+            task.execute(url);
+            String result = task.get();
+            JSONObject object = new JSONObject(result);
+           return object.getInt("count");
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
         return -1;
     }
 
     public void addLike(User from, User to) {
-        SQLiteDatabase database = getWritableDatabase();
-        int fromId = from.getId();
-        int toId = to.getId();
-        String sql = "insert into " + TABLE_LIKES + " ( " + LIKE_FROM + ", " + LIKE_TO + " ) values ( " + fromId + ", " +
-                toId + " )";
-        database.execSQL(sql);
+        try {
+            URL url = new URL(PATH + "AddLike");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+            OutputStream os = con.getOutputStream();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("from", from.getId());
+            jsonObject.put("to", to.getId());
+            byte[] input = jsonObject.toString().getBytes("utf-8");
+            os.write(input);
+            os.flush();
+            os.close();
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void deleteLike(User from, User to) {
-        SQLiteDatabase database = getWritableDatabase();
-        int fromId = from.getId();
-        int toId = to.getId();
-        String sql = "delete from " + TABLE_LIKES + " where " + LIKE_FROM + "=" + fromId + " and " + LIKE_TO + "=" + toId;
-        database.execSQL(sql);
+        try {
+            URL url = new URL(PATH + "DeleteLike");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+            OutputStream os = con.getOutputStream();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("from", from.getId());
+            jsonObject.put("to", to.getId());
+            byte[] input = jsonObject.toString().getBytes("utf-8");
+            os.write(input);
+            os.flush();
+            os.close();
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private class MyJsonTask extends AsyncTask<String, String, String> {
