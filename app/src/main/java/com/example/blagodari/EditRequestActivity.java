@@ -3,10 +3,12 @@ package com.example.blagodari;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -32,6 +34,7 @@ public class EditRequestActivity extends AppCompatActivity {
     DBhelper dBhelper;
     int id;
     Bitmap photoBitmap;
+    ProgressDialog pd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +89,7 @@ public class EditRequestActivity extends AppCompatActivity {
                     } else{
                     request=new Request(r.getId(),user, strtitle, strtext, time);}
                 }
-            dBhelper.updateRequest(request);
+            new UpdateRequestTask().execute(request);
             Toast toast=Toast.makeText(this, "Запрос обновлен", Toast.LENGTH_LONG);
             toast.show();
             Intent intent=new Intent(this, EditActivity.class);
@@ -109,6 +112,33 @@ public class EditRequestActivity extends AppCompatActivity {
                 photoBitmap = bitmap;
             } catch (IOException e){
                 e.printStackTrace();
+            }
+        }
+    }
+    private class UpdateRequestTask extends AsyncTask<Request, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(EditRequestActivity.this);
+            pd.setMessage("Пожалуйста, подождите");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        @Override
+        protected Void doInBackground(Request... params) {
+            try {
+                dBhelper.updateRequest(params[0]);
+            } catch (Exception ex) {
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if (pd.isShowing()) {
+                pd.dismiss();
             }
         }
     }

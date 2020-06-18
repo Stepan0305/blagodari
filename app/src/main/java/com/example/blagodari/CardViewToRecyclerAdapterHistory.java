@@ -1,7 +1,9 @@
 package com.example.blagodari;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +26,7 @@ public class CardViewToRecyclerAdapterHistory extends RecyclerView.Adapter<CardV
     private List<History> data;
     Context context;
     DBhelper dBhelper;
-
+    ProgressDialog pd;
     CardViewToRecyclerAdapterHistory(Context context, List<History> data){
         this.inflater=LayoutInflater.from(context);
         this.data=data;
@@ -72,7 +74,7 @@ public class CardViewToRecyclerAdapterHistory extends RecyclerView.Adapter<CardV
             });
         } else {
             holder.itemView.setVisibility(View.GONE);
-            dBhelper.deleteFromHistory(history);
+            new DeleteFromHistoryTask().execute(history);
         }
     }
 
@@ -94,6 +96,33 @@ public class CardViewToRecyclerAdapterHistory extends RecyclerView.Adapter<CardV
             this.itemView=itemView;
             cardView=itemView.findViewById(R.id.cardHistory);
             dBhelper=new DBhelper(context);
+        }
+    }
+    private class DeleteFromHistoryTask extends AsyncTask<History, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(context);
+            pd.setMessage("Пожалуйста, подождите");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        @Override
+        protected Void doInBackground(History... params) {
+            try {
+                dBhelper.deleteFromHistory(params[0]);
+            } catch (Exception ex) {
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if (pd.isShowing()) {
+                pd.dismiss();
+            }
         }
     }
 }

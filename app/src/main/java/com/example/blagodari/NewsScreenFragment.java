@@ -70,7 +70,6 @@ public class NewsScreenFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_on_news_screen, container, false);
         DBhelper dBhelper = new DBhelper(getActivity());
         view.setBackgroundColor(getResources().getColor(R.color.Wh));
-        //long time = System.currentTimeMillis() / 1000;
         ArrayList<News> news = dBhelper.getAllNews();
         recyclerView = view.findViewById(R.id.recyclerViewNewsScreen);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

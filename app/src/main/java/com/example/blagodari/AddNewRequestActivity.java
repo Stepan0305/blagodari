@@ -4,10 +4,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -33,6 +35,7 @@ public class AddNewRequestActivity extends AppCompatActivity {
     Uri imageUri;
     Bitmap photoBitmap;
     ConstraintLayout constraintLayout;
+    ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +75,10 @@ public class AddNewRequestActivity extends AppCompatActivity {
                     }
                     request = new Request(user, strtitle, strtext, bitmapSmall, time);
                 } else {
-                    request=new Request(user, strtitle, strtext, time);
+                    request = new Request(user, strtitle, strtext, time);
                 }
-                dBhelper.addRequest(request);
+                AddRequestTask task=new AddRequestTask();
+                task.execute(request);
                 Toast toast = Toast.makeText(this, "Запрос добавлен", Toast.LENGTH_LONG);
                 toast.show();
                 finish();
@@ -103,6 +107,34 @@ public class AddNewRequestActivity extends AppCompatActivity {
                 photoBitmap = bitmap;
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    private class AddRequestTask extends AsyncTask<Request, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(AddNewRequestActivity.this);
+            pd.setMessage("Пожалуйста, подождите");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        @Override
+        protected Void doInBackground(Request... params) {
+            try {
+                dBhelper.addRequest(params[0]);
+            } catch (Exception ex) {
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if (pd.isShowing()) {
+                pd.dismiss();
             }
         }
     }

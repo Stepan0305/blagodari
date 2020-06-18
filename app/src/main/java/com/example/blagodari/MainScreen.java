@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -108,7 +109,7 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
                     return true;
                 case R.id.btnAdd:
                     loadFragment(AddScreenFragment.newInstance());
-                    txtTitle.setText("Новый запрос");
+                    txtTitle.setText("Опции");
                     return true;
                 case R.id.btnProfile:
                     loadFragment(UserProfileFragment.newInstance());
@@ -165,11 +166,14 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
                 break;
             case R.id.btnExit:
                 SharedPreferences pref = getSharedPreferences(DBhelper.LOGGED_USER_ID, 0);
-                pref.edit().clear();
+                pref.edit().remove(DBhelper.LOGGED_USER_ID);
                 pref.edit().commit();
                 Intent intent1 = new Intent(this, LoginActivity.class);
                 startActivity(intent1);
                 break;
+            case R.id.btnSite:
+                Intent oy=new Intent(Intent.ACTION_VIEW, Uri.parse("https://blagodari.herokuapp.com/"));
+                startActivity(oy);
         }
         return false;
     }

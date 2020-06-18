@@ -3,10 +3,12 @@ package com.example.blagodari;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.example.blagodari.Models.DBhelper;
+import com.example.blagodari.Models.Request;
 import com.example.blagodari.Models.User;
 
 import java.io.IOException;
@@ -26,7 +29,8 @@ public class AddAvatar extends AppCompatActivity {
     private static final int PICK_IMG = 1;
     Uri imageUri;
     Bitmap photoBitmap;
-
+    ProgressDialog pd;
+    DBhelper dBhelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +43,7 @@ public class AddAvatar extends AppCompatActivity {
         surname = i.getStringExtra("surname");
         passwd = i.getStringExtra("passwd");
         email = i.getStringExtra("email");
+        dBhelper = new DBhelper(this);
     }
 
     public void finishSignUp(View v) {
@@ -55,7 +60,7 @@ public class AddAvatar extends AppCompatActivity {
             if (avatar.getDrawable() != null) {
                 Bitmap bitmap = ((BitmapDrawable) avatar.getDrawable()).getBitmap();
                 Bitmap bitmapSmall;
-                if (bitmap.getByteCount() > 250000) {
+                if (bitmap.getByteCount() > 200000) {
                     bitmapSmall = User.resizeBitmap(bitmap);
                 } else {
                     bitmapSmall = bitmap;
@@ -64,8 +69,7 @@ public class AddAvatar extends AppCompatActivity {
             } else {
                 u=new User(name, surname, passwd, email, time);
             }
-            DBhelper dBhelper = new DBhelper(this);
-            dBhelper.addUser(u);
+            new AddUserTask().execute(u);
             Intent i = new Intent(this, LoginActivity.class);
             startActivity(i);
         }
@@ -82,6 +86,38 @@ public class AddAvatar extends AppCompatActivity {
                 photoBitmap = bitmap;
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+    private class AddUserTask extends AsyncTask<User, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(AddAvatar.this);
+            pd.setMessage("Пожалуйста, подождите");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        @Override
+        protected Void doInBackground(User... params) {
+            try {
+                dBhelper.addUser(params[0]);
+            } catch (Exception ex) {
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            try {
+                if ((pd!= null) && pd.isShowing()) {
+                    pd.dismiss();
+                }
+            }  catch (final Exception e) {
+            } finally {
+                pd = null;
             }
         }
     }

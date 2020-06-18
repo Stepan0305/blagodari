@@ -1,7 +1,9 @@
 package com.example.blagodari;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +24,13 @@ public class CardViewToRecyclerAdapterEdit extends RecyclerView.Adapter<CardView
     private LayoutInflater inflater;
     private List<Request> data;
     private Context context;
-
+    ProgressDialog pd;
+    DBhelper dBhelper;
     CardViewToRecyclerAdapterEdit(Context context, List<Request> data) {
         this.inflater = LayoutInflater.from(context);
         this.data = data;
         this.context = context;
+        this.dBhelper = new DBhelper(context);
     }
 
     @NonNull
@@ -41,7 +45,6 @@ public class CardViewToRecyclerAdapterEdit extends RecyclerView.Adapter<CardView
         final Request request = data.get(position);
         holder.title.setText(request.getTitle());
         holder.text.setText(request.getText());
-        //holder.photo.setImageResource(request.getPhoto_address());
         long time = request.getTime_created();
         String strTime = Pomogator.convertSecondsToString(time);
         holder.time_created.setText(strTime);
@@ -49,8 +52,7 @@ public class CardViewToRecyclerAdapterEdit extends RecyclerView.Adapter<CardView
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DBhelper dBhelper = new DBhelper(context);
-                dBhelper.deleteRequest(request);
+                new DeleteRequestTask().execute(request);
                 data.remove(request);
                 notifyItemRemoved(position);
                 Toast toast = Toast.makeText(context, "Запрос удален", Toast.LENGTH_LONG);
@@ -60,7 +62,6 @@ public class CardViewToRecyclerAdapterEdit extends RecyclerView.Adapter<CardView
         holder.edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DBhelper dBhelper = new DBhelper(context);
                 Intent intent = new Intent(context, EditRequestActivity.class);
                 intent.putExtra("id", request.getId());
                 context.startActivity(intent);
@@ -86,6 +87,33 @@ public class CardViewToRecyclerAdapterEdit extends RecyclerView.Adapter<CardView
             time_created = itemView.findViewById(R.id.txtTimeOnEditScreen);
             delete = itemView.findViewById(R.id.btnDeleteOnEditScreen);
             edit = itemView.findViewById(R.id.btnEditOnEditScreen);
+        }
+    }
+    private class DeleteRequestTask extends AsyncTask<Request, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(context);
+            pd.setMessage("Пожалуйста, подождите");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        @Override
+        protected Void doInBackground(Request... params) {
+            try {
+                dBhelper.deleteRequest(params[0]);
+            } catch (Exception ex) {
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if (pd.isShowing()) {
+                pd.dismiss();
+            }
         }
     }
 }

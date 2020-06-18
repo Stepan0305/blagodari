@@ -1,9 +1,11 @@
 package com.example.blagodari;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +33,7 @@ public class CardViewToRecyclerAdapterMain extends RecyclerView.Adapter<CardView
     int currentUserId;
     Context context;
     DBhelper dBhelper;
-
+    ProgressDialog pd;
     CardViewToRecyclerAdapterMain(Context context, List<Request> data) {
         this.inflater = LayoutInflater.from(context);
         this.data = data;
@@ -74,7 +76,7 @@ public class CardViewToRecyclerAdapterMain extends RecyclerView.Adapter<CardView
                 Context context = v.getContext();
                 Intent intent = new Intent(context, RequestOpenedActivity.class);
                 int id = request.getId();
-                dBhelper.addToHistory(new History(dBhelper.getCurrentUser(), request));
+                new AddToHistoryTask().execute(new History(dBhelper.getCurrentUser(), request));
                 intent.putExtra("id", id);
                 context.startActivity(intent);
             }
@@ -87,9 +89,9 @@ public class CardViewToRecyclerAdapterMain extends RecyclerView.Adapter<CardView
                 builder.setPositiveButton("Да", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dBhelper.deleteRequest(request);
+                        new DeleteRequestTask().execute(request);
                         data.remove(request);
-                        // dBhelper.deleteFromHistory(new History());
+                        new DeleteFromHistoryTask().execute(new History(dBhelper.getCurrentUser(), request));
                         notifyItemRemoved(position);
                     }
                 });
@@ -164,4 +166,85 @@ public class CardViewToRecyclerAdapterMain extends RecyclerView.Adapter<CardView
             notifyDataSetChanged();
         }
     };
+    private class AddToHistoryTask extends AsyncTask<History, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(context);
+            pd.setMessage("Пожалуйста, подождите");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        @Override
+        protected Void doInBackground(History... params) {
+            try {
+                dBhelper.addToHistory(params[0]);
+            } catch (Exception ex) {
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if (pd.isShowing()) {
+                pd.dismiss();
+            }
+        }
+    }
+    private class DeleteRequestTask extends AsyncTask<Request, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(context);
+            pd.setMessage("Пожалуйста, подождите");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        @Override
+        protected Void doInBackground(Request... params) {
+            try {
+                dBhelper.deleteRequest(params[0]);
+            } catch (Exception ex) {
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if (pd.isShowing()) {
+                pd.dismiss();
+            }
+        }
+    }
+    private class DeleteFromHistoryTask extends AsyncTask<History, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(context);
+            pd.setMessage("Пожалуйста, подождите");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        @Override
+        protected Void doInBackground(History... params) {
+            try {
+                dBhelper.deleteFromHistory(params[0]);
+            } catch (Exception ex) {
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if (pd.isShowing()) {
+                pd.dismiss();
+            }
+        }
+    }
 }
