@@ -3,7 +3,9 @@ package com.example.blagodari;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -26,6 +28,7 @@ public class AnotherUserAccount extends AppCompatActivity {
     TextView name, countLikes;
     DBhelper dBhelper;
     User currentUser;
+    ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,12 +65,12 @@ public class AnotherUserAccount extends AppCompatActivity {
             if (dBhelper.getCurrentUser().getId() == currentUser.getId()) {
                 like.setVisibility(View.GONE);
             } else {
-                if (!dBhelper.checkIfAlreadyLiked(dBhelper.getCurrentUser(), currentUser)) { //если еще не лайкнул
-                    dBhelper.addLike(dBhelper.getCurrentUser(), currentUser);
+                if (!dBhelper.checkIfAlreadyLiked(dBhelper.getCurrentUser(), currentUser)) {  //если еще не лайкнул
+                    new AddLikeTask().execute(currentUser);
                     like.setImageResource(R.drawable.like_active);
                     countLikes.setText(dBhelper.likeCount(currentUser) + "");
                 } else {
-                    dBhelper.deleteLike(dBhelper.getCurrentUser(), currentUser);
+                    new DeleteLikeTask().execute(currentUser);
                     like.setImageResource(R.drawable.like_non_active);
                     countLikes.setText(dBhelper.likeCount(currentUser) + "");
                 }
@@ -104,24 +107,109 @@ public class AnotherUserAccount extends AppCompatActivity {
             case 1:
                 m = new Message(chat, current, admin, "Пользователь с id " + currentUser.getId() + " ведет" +
                         " себя агрессивно!", time);
-                dBhelper.createNewMessage(m);
+                new AddMessageTask().execute(m);
                 break;
             case 2:
                 m = new Message(chat, current, admin, "Пользователь с id " + currentUser.getId() + " занимается" +
                         " спамом!", time);
-                dBhelper.createNewMessage(m);
+                new AddMessageTask().execute(m);
                 break;
             case 3:
                 m = new Message(chat, current, admin, "Пользователь с id " + currentUser.getId() + " - мошенник!", time);
-                dBhelper.createNewMessage(m);
+                new AddMessageTask().execute(m);
                 break;
             case 4:
                 m = new Message(chat, current, admin, "Пользователь с id " + currentUser.getId() + " ведет себя" +
                         " неприемлимо и нарушает правила проекта!", time);
-                dBhelper.createNewMessage(m);
+                new AddMessageTask().execute(m);
                 break;
         }
+
         Toast.makeText(this, "Ваша жалоба успешно отправлена!", Toast.LENGTH_LONG).show();
         return super.onContextItemSelected(item);
+    }
+
+    private class AddMessageTask extends AsyncTask<Message, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(AnotherUserAccount.this);
+            pd.setMessage("Пожалуйста, подождите");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        @Override
+        protected Void doInBackground(Message... params) {
+            try {
+                dBhelper.createNewMessage(params[0]);
+            } catch (Exception ex) {
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if (pd.isShowing()) {
+                pd.dismiss();
+            }
+        }
+    }
+
+    private class AddLikeTask extends AsyncTask<User, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(AnotherUserAccount.this);
+            pd.setMessage("Пожалуйста, подождите");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        @Override
+        protected Void doInBackground(User... params) {
+            try {
+                dBhelper.addLike(dBhelper.getCurrentUser(), params[0]);
+            } catch (Exception ex) {
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if (pd.isShowing()) {
+                pd.dismiss();
+            }
+        }
+    }
+
+    private class DeleteLikeTask extends AsyncTask<User, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(AnotherUserAccount.this);
+            pd.setMessage("Пожалуйста, подождите");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        @Override
+        protected Void doInBackground(User... params) {
+            try {
+                dBhelper.deleteLike(dBhelper.getCurrentUser(), params[0]);
+            } catch (Exception ex) {
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if (pd.isShowing()) {
+                pd.dismiss();
+            }
+        }
     }
 }

@@ -30,7 +30,6 @@ public class LoginActivity extends AppCompatActivity {
             boolean b = db.checkIfUserExists(email.getText().toString(), password.getText().toString()+"");
             if (b) {
                 db.setCurrentUser(db.getUserByEmailAndPassword(email.getText().toString(), password.getText().toString()));
-                //CurrentUser.setUser(db.getUserByEmailAndPassword(email.getText().toString(), password.getText().toString()));
                 Intent intent = new Intent(this, MainScreen.class);
                 startActivity(intent);
 

@@ -3,10 +3,12 @@ package com.example.blagodari;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.InputType;
@@ -33,7 +35,7 @@ public class AddNewsActivity extends AppCompatActivity {
     private static final int PICK_IMG = 1;
     Uri imageUri;
     Bitmap photoBitmap;
-
+    ProgressDialog pd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +81,7 @@ public class AddNewsActivity extends AppCompatActivity {
                     news= new News(strtitle, strtext, time);
                 }
 
-                dBhelper.addNews(news);
+                new AddNewsTask().execute(news);
                 Toast toast = Toast.makeText(this, "Новость добавлена", Toast.LENGTH_LONG);
                 toast.show();
                 finish();
@@ -100,6 +102,38 @@ public class AddNewsActivity extends AppCompatActivity {
                 photoBitmap = bitmap;
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+    private class AddNewsTask extends AsyncTask<News, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(AddNewsActivity.this);
+            pd.setMessage("Пожалуйста, подождите");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        @Override
+        protected Void doInBackground(News... params) {
+            try {
+                dBhelper.addNews(params[0]);
+            } catch (Exception ex) {
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            try {
+                if ((pd!= null) && pd.isShowing()) {
+                    pd.dismiss();
+                }
+            }  catch (final Exception e) {
+            } finally {
+                pd = null;
             }
         }
     }

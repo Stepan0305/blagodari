@@ -80,7 +80,6 @@ public class MainScreenFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerAdapter = new CardViewToRecyclerAdapterMain(getActivity(), items);
         recyclerView.setAdapter(recyclerAdapter);
-        //btnSearch=getActivity().findViewById(R.id.btnSearch);
         return view;
     }
 }

@@ -1,9 +1,11 @@
 package com.example.blagodari;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +31,7 @@ public class CardViewToRecyclerAdapterNews extends RecyclerView.Adapter<CardView
     List<News> newsFull;
     Context context;
     DBhelper dBhelper;
-
+    ProgressDialog pd;
     CardViewToRecyclerAdapterNews(Context context, List<News> news) {
         this.inflater = LayoutInflater.from(context);
         this.news = news;
@@ -61,7 +63,7 @@ public class CardViewToRecyclerAdapterNews extends RecyclerView.Adapter<CardView
                 builder.setPositiveButton("Да", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dBhelper.deleteNews(n);
+                        new DeleteNewsTask().execute(n);
                         news.remove(n);
                         notifyItemRemoved(position);
                     }
@@ -144,5 +146,32 @@ public class CardViewToRecyclerAdapterNews extends RecyclerView.Adapter<CardView
             notifyDataSetChanged();
         }
     };
+    private class DeleteNewsTask extends AsyncTask<News, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(context);
+            pd.setMessage("Пожалуйста, подождите");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        @Override
+        protected Void doInBackground(News... params) {
+            try {
+                dBhelper.deleteNews(params[0]);
+            } catch (Exception ex) {
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if (pd.isShowing()) {
+                pd.dismiss();
+            }
+        }
+    }
 }
 

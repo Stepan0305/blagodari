@@ -7,9 +7,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+
+import com.example.blagodari.MainScreen;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,63 +29,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class DBhelper {
-    //дб
-    public static final String DATABASE_NAME = "Blagodari_database";
-    public static final int DATABASE_VERSION = 15;
-    //юзеры
-    public static final String TABLE_USERS = "Users";
-    public static final String KEY_ID_USERS = "_id";
-    public static final String USER_NAME = "FirstName";
-    public static final String USER_SURNAME = "Surname";
-    public static final String USER_PASSWORD = "Password";
-    public static final String USER_EMAIL = "Email";
-    public static final String USER_ACCOUNT_DATE_CREATED = "CreatedTime";
-    public static final String USER_AVATAR = "Avatar";
-    //запросы
-    public static final String TABLE_REQUESTS = "Requests";
-    public static final String KEY_ID_REQUESTS = "_id";
-    public static final String REQUEST_USER_CREATED_ID = "UserCreated";
-    public static final String REQUEST_TITLE = "Title";
-    public static final String REQUEST_TEXT = "RequestText";
-    public static final String REQUEST_TIME_CREATED = "TimeCreated";
-    public static final String REQUEST_PHOTO = "Photo";
-    //новости
-    public static final String TABLE_NEWS = "News";
-    public static final String KEY_ID_NEWS = "_id";
-    public static final String NEWS_TITLE = "Title";
-    public static final String NEWS_TEXT = "NewsText";
-    public static final String NEWS_TIME_CREATED = "TimeCreated";
-    public static final String NEWS_PHOTO = "Photo";
-    //история
-    public static final String TABLE_HISTORY = "History";
-    public static final String KEY_ID_HISTORY = "_id";
-    public static final String HISTORY_EVENT_TYPE_ID = "EventType";//1 request 2 news
-    public static final String HISTORY_EVENT_ID = "EventID";
-    public static final String HISTORY_USER_CREATED_ID = "UserCreated";
-    //чаты
-    public static final String TABLE_CHATS = "Chats";
-    public static final String KEY_ID_CHATS = "_id";
-    public static final String CHATS_USER_1 = "UserFirst";
-    public static final String CHATS_USER_2 = "UserSecond";
-    //сообщения
-    public static final String TABLE_MESSAGES = "Messages";
-    public static final String MESSAGES_CHAT_ID = "ChatId";
-    public static final String MESSAGE_FROM = "MessageFrom";
-    public static final String MESSAGE_TO = "MessageTo";
-    public static final String MESSAGE_TEXT = "MessageText";
-    public static final String MESSAGE_TIME_CREATED = "TimeCreated";
-    //лайки
-    public static final String TABLE_LIKES = "Likes";
-    public static final String LIKE_FROM = "LikeFrom";
-    public static final String LIKE_TO = "LikeTo";
 
     public static final String LOGGED_USER_ID = "UserLogged"; //для shared preferences
-    public static final int ADMIN_ID = 1;
+    public static final int ADMIN_ID = 3;
     private User CurrentUser;
-    ContentValues contentValues = new ContentValues();
     Context context;
     public static final String PATH = "https://blagodari.herokuapp.com/";
 
+    public DBhelper(Context context) {
+        this.context = context;
+    }
 
     public User getUserById(int id) {
         String firstname = null, surname = null, passwd = null, email = null, avatar = null;
@@ -245,38 +201,38 @@ public class DBhelper {
         return false;
     }
 
-    public void addRequest(Request request) {
-        try {
-            URL url = new URL(PATH + "AddRequest");
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/json; utf-8");
-            con.setRequestProperty("Accept", "application/json");
-            con.setDoOutput(true);
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("id", request.getId());
-            jsonObject.put("userId", request.getUser().getId());
-            jsonObject.put("title", request.getTitle());
-            jsonObject.put("text", request.getText());
-            if (request.getPhotoAsString() != null) {
-                jsonObject.put("photo", request.getPhotoAsString());
-            }
-            jsonObject.put("time", request.getTime_created());
-            OutputStream os = con.getOutputStream();
-            byte[] input = jsonObject.toString().getBytes("utf-8");
-            os.write(input);
-            os.flush();
-            os.close();
-            BufferedReader br = new BufferedReader(
-                    new InputStreamReader(con.getInputStream(), "utf-8"));
-            StringBuilder response = new StringBuilder();
-            String responseLine = null;
-            while ((responseLine = br.readLine()) != null) {
-                response.append(responseLine.trim());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void addRequest(final Request request) {
+                try {
+                    URL url = new URL(PATH + "AddRequest");
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    con.setRequestMethod("POST");
+                    con.setRequestProperty("Content-Type", "application/json; utf-8");
+                    con.setRequestProperty("Accept", "application/json");
+                    con.setDoOutput(true);
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("id", request.getId());
+                    jsonObject.put("userId", request.getUser().getId());
+                    jsonObject.put("title", request.getTitle());
+                    jsonObject.put("text", request.getText());
+                    if (request.getPhotoAsString() != null) {
+                        jsonObject.put("photo", request.getPhotoAsString());
+                    }
+                    jsonObject.put("time", request.getTime_created());
+                    OutputStream os = con.getOutputStream();
+                    byte[] input = jsonObject.toString().getBytes("utf-8");
+                    os.write(input);
+                    os.flush();
+                    os.close();
+                    BufferedReader br = new BufferedReader(
+                            new InputStreamReader(con.getInputStream(), "utf-8"));
+                    StringBuilder response = new StringBuilder();
+                    String responseLine = null;
+                    while ((responseLine = br.readLine()) != null) {
+                        response.append(responseLine.trim());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
     }
 
     public ArrayList<Request> getAllRequests() {
@@ -397,6 +353,7 @@ public class DBhelper {
             time = object.getLong("time");
             id = object.getInt("id");
             photo = object.getString("photo");
+            userId = object.getInt("userId");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -746,12 +703,12 @@ public class DBhelper {
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject object = arr.getJSONObject(i);
                 User userFrom, userTo;
-                String text=object.getString("text");
-                long time_created=object.getLong("time");
-                int userFromId=object.getInt("userFromId");
-                int userToId=object.getInt("userToId");
-                userFrom=getUserById(userFromId);
-                userTo=getUserById(userToId);
+                String text = object.getString("text");
+                long time_created = object.getLong("time");
+                int userFromId = object.getInt("userFromId");
+                int userToId = object.getInt("userToId");
+                userFrom = getUserById(userFromId);
+                userTo = getUserById(userToId);
                 messages.add(new Message(ch, userFrom, userTo, text, time_created));
             }
             return messages;
@@ -768,7 +725,7 @@ public class DBhelper {
             task.execute(url);
             String result = task.get();
             JSONObject object = new JSONObject(result);
-            int id=object.getInt("id");
+            int id = object.getInt("id");
             return new Chat(id, u1, u2);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -828,7 +785,7 @@ public class DBhelper {
             task.execute(url);
             String result = task.get();
             JSONObject object = new JSONObject(result);
-           return object.getInt("count");
+            return object.getInt("count");
         } catch (Exception ex) {
             ex.printStackTrace();
         }

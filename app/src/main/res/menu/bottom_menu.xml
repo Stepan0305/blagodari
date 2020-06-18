@@ -10,7 +10,7 @@
         android:title="" />
     <item
         android:id="@+id/btnAdd"
-        android:icon="@drawable/ic_add_black_24dp"
+        android:icon="@drawable/ic_reorder_black_24dp"
         android:title="" />
    <item
         android:id="@+id/btnProfile"

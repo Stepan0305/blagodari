@@ -57,9 +57,7 @@ public class CardViewToRecyclerAdapterChat extends RecyclerView.Adapter<CardView
         holder.text.setText(message.getText());
         holder.time.setText(Pomogator.convertSecondsToStringDateTime(message.getTime_created()));
     }
-    public void update(){
-        notifyDataSetChanged();
-    }
+
     @Override
     public int getItemCount() {
         return messages.size();
