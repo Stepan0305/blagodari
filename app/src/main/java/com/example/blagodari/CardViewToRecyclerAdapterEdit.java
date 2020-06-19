@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.blagodari.Models.DBhelper;
+import com.example.blagodari.Models.History;
 import com.example.blagodari.Models.Request;
 
 import java.util.List;
@@ -111,8 +112,13 @@ public class CardViewToRecyclerAdapterEdit extends RecyclerView.Adapter<CardView
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            if (pd.isShowing()) {
-                pd.dismiss();
+            try {
+                if ((pd!= null) && pd.isShowing()) {
+                    pd.dismiss();
+                }
+            }  catch (final Exception e) {
+            } finally {
+                pd = null;
             }
         }
     }

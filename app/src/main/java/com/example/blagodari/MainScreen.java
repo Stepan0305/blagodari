@@ -19,6 +19,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -56,6 +58,18 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
+        boolean connected;
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            connected = true;
+        }
+        else connected=false;
+        if (!connected){
+            Intent i=new Intent(this, NoConnection.class);
+            startActivity(i);
+            finish();
+        }
         dBhelper = new DBhelper(this);
         Toolbar mActionBar = findViewById(R.id.myActionBar);
         setSupportActionBar(mActionBar);
@@ -76,6 +90,18 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
     @Override
     protected void onStart() {
         super.onStart();
+        boolean connected;
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            connected = true;
+        }
+        else connected=false;
+        if (!connected){
+            Intent i=new Intent(this, NoConnection.class);
+            startActivity(i);
+            finish();
+        }
         User user = dBhelper.getCurrentUser();
         if (user == null) {
             Intent intent = new Intent(this, LoginActivity.class);
@@ -153,8 +179,9 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
                     Intent ii = new Intent(Intent.ACTION_SEND);
                     ii.setType("text/plain");
                     ii.putExtra(Intent.EXTRA_SUBJECT, "БлагоДари");
-                    String sAux = "\n БлагоДари - дари людям добро! Приложение для помощи людям.\n\n";
-                    sAux = sAux + "https://drive.google.com/file/d/1da2DVmJcbJvWDxpXeVKrVbs9Unr4Ir68/view?usp=sharing \n\n";
+                    String sAux = "\n БлагоДари - дари людям добро! Портал для помощи людям.\n\n";
+                    sAux = sAux + "Скачать Android-приложение: \n https://blagodari.herokuapp.com/download.html \n\n" +
+                            "Веб-сайт: \n https://blagodari.herokuapp.com/ ";
                     ii.putExtra(Intent.EXTRA_TEXT, sAux);
                     startActivity(Intent.createChooser(ii, "Поделиться с помощью..."));
                 } catch (Exception e) {

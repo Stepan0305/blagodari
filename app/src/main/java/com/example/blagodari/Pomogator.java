@@ -1,5 +1,9 @@
 package com.example.blagodari;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -24,5 +28,4 @@ public class Pomogator {
             return false;
         }else return true;
     }
-
 }

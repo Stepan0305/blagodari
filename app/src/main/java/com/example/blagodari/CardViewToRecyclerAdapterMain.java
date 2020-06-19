@@ -1,5 +1,6 @@
 package com.example.blagodari;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -91,7 +92,6 @@ public class CardViewToRecyclerAdapterMain extends RecyclerView.Adapter<CardView
                     public void onClick(DialogInterface dialog, int which) {
                         new DeleteRequestTask().execute(request);
                         data.remove(request);
-                        new DeleteFromHistoryTask().execute(new History(dBhelper.getCurrentUser(), request));
                         notifyItemRemoved(position);
                     }
                 });
@@ -188,8 +188,13 @@ public class CardViewToRecyclerAdapterMain extends RecyclerView.Adapter<CardView
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            if (pd.isShowing()) {
-                pd.dismiss();
+            try {
+                if ((pd!= null) && pd.isShowing()) {
+                    pd.dismiss();
+                }
+            }  catch (final Exception e) {
+            } finally {
+                pd = null;
             }
         }
     }
@@ -215,12 +220,17 @@ public class CardViewToRecyclerAdapterMain extends RecyclerView.Adapter<CardView
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            if (pd.isShowing()) {
-                pd.dismiss();
+            try {
+                if ((pd!= null) && pd.isShowing()) {
+                    pd.dismiss();
+                }
+            }  catch (final Exception e) {
+            } finally {
+                pd = null;
             }
         }
     }
-    private class DeleteFromHistoryTask extends AsyncTask<History, Void, Void> {
+   /* private class DeleteFromHistoryTask extends AsyncTask<History, Void, Void> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -242,9 +252,14 @@ public class CardViewToRecyclerAdapterMain extends RecyclerView.Adapter<CardView
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            if (pd.isShowing()) {
-                pd.dismiss();
+            try {
+                if ((pd!= null) && pd.isShowing()) {
+                    pd.dismiss();
+                }
+            }  catch (final Exception e) {
+            } finally {
+                pd = null;
             }
         }
-    }
+    }*/
 }

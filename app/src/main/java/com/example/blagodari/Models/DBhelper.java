@@ -36,9 +36,11 @@ public class DBhelper {
     Context context;
     public static final String PATH = "https://blagodari.herokuapp.com/";
 
+
     public DBhelper(Context context) {
         this.context = context;
     }
+
 
     public User getUserById(int id) {
         String firstname = null, surname = null, passwd = null, email = null, avatar = null;
@@ -202,37 +204,37 @@ public class DBhelper {
     }
 
     public void addRequest(final Request request) {
-                try {
-                    URL url = new URL(PATH + "AddRequest");
-                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                    con.setRequestMethod("POST");
-                    con.setRequestProperty("Content-Type", "application/json; utf-8");
-                    con.setRequestProperty("Accept", "application/json");
-                    con.setDoOutput(true);
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("id", request.getId());
-                    jsonObject.put("userId", request.getUser().getId());
-                    jsonObject.put("title", request.getTitle());
-                    jsonObject.put("text", request.getText());
-                    if (request.getPhotoAsString() != null) {
-                        jsonObject.put("photo", request.getPhotoAsString());
-                    }
-                    jsonObject.put("time", request.getTime_created());
-                    OutputStream os = con.getOutputStream();
-                    byte[] input = jsonObject.toString().getBytes("utf-8");
-                    os.write(input);
-                    os.flush();
-                    os.close();
-                    BufferedReader br = new BufferedReader(
-                            new InputStreamReader(con.getInputStream(), "utf-8"));
-                    StringBuilder response = new StringBuilder();
-                    String responseLine = null;
-                    while ((responseLine = br.readLine()) != null) {
-                        response.append(responseLine.trim());
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        try {
+            URL url = new URL(PATH + "AddRequest");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", request.getId());
+            jsonObject.put("userId", request.getUser().getId());
+            jsonObject.put("title", request.getTitle());
+            jsonObject.put("text", request.getText());
+            if (request.getPhotoAsString() != null) {
+                jsonObject.put("photo", request.getPhotoAsString());
+            }
+            jsonObject.put("time", request.getTime_created());
+            OutputStream os = con.getOutputStream();
+            byte[] input = jsonObject.toString().getBytes("utf-8");
+            os.write(input);
+            os.flush();
+            os.close();
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<Request> getAllRequests() {
