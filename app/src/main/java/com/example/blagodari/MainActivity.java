@@ -2,7 +2,10 @@ package com.example.blagodari;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
@@ -19,6 +22,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        boolean connected;
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            connected = true;
+        }
+        else connected=false;
+        if (!connected){
+            Intent i=new Intent(this, NoConnection.class);
+            startActivity(i);
+            finish();
+        }
         name = findViewById(R.id.inputName1);
         surname = findViewById(R.id.editText2);
         email = findViewById(R.id.editText3);

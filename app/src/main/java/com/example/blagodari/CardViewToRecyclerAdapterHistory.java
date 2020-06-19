@@ -73,8 +73,8 @@ public class CardViewToRecyclerAdapterHistory extends RecyclerView.Adapter<CardV
                 }
             });
         } else {
-            holder.itemView.setVisibility(View.GONE);
-            new DeleteFromHistoryTask().execute(history);
+           holder.itemView.setVisibility(View.GONE);
+            notifyItemRemoved(position);
         }
     }
 
@@ -96,33 +96,6 @@ public class CardViewToRecyclerAdapterHistory extends RecyclerView.Adapter<CardV
             this.itemView=itemView;
             cardView=itemView.findViewById(R.id.cardHistory);
             dBhelper=new DBhelper(context);
-        }
-    }
-    private class DeleteFromHistoryTask extends AsyncTask<History, Void, Void> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            pd = new ProgressDialog(context);
-            pd.setMessage("Пожалуйста, подождите");
-            pd.setCancelable(false);
-            pd.show();
-        }
-
-        @Override
-        protected Void doInBackground(History... params) {
-            try {
-                dBhelper.deleteFromHistory(params[0]);
-            } catch (Exception ex) {
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            if (pd.isShowing()) {
-                pd.dismiss();
-            }
         }
     }
 }
