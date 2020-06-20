@@ -77,7 +77,7 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
         dBhelper = new DBhelper(this);
         User user = dBhelper.getCurrentUser();
         if (user == null) {
-            Intent intent = new Intent(this, LoginActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
@@ -115,7 +115,7 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
         }
         User user = dBhelper.getCurrentUser();
         if (user == null) {
-            Intent intent = new Intent(this, LoginActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
