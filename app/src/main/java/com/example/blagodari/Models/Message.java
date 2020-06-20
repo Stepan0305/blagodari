@@ -1,5 +1,8 @@
 package com.example.blagodari.Models;
-
+/**
+ * Модель сообщения, отправленного пользователем в каком-либо чате.
+ * Состоит из модели чата, двух пользователей (кто отправил и кому отправили), текста и времени отправления.
+ * */
 public class Message {
     private Chat chat;
     private User userFrom;

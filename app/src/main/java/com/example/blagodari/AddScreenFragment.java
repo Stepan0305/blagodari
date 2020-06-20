@@ -16,6 +16,9 @@ import com.example.blagodari.Models.DBhelper;
 
 import java.util.ArrayList;
 
+/**
+ * Фрагмент, на котором отображается меню опций.
+ */
 public class AddScreenFragment extends Fragment {
     RecyclerView recyclerView;
     CardViewToRecyclerAdapterAdd recyclerAdapter;

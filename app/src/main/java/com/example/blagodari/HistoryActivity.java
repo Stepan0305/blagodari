@@ -16,7 +16,10 @@ import com.example.blagodari.Models.DBhelper;
 import com.example.blagodari.Models.History;
 
 import java.util.ArrayList;
-
+/**
+ * Экран, на котором отображается вся история пользователя.
+ * Все открытые ранее посты и новости.
+ * */
 public class HistoryActivity extends AppCompatActivity {
     ImageButton back;
     RecyclerView recyclerView;

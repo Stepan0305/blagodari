@@ -23,7 +23,11 @@ import com.example.blagodari.Models.Chat;
 import com.example.blagodari.Models.DBhelper;
 import com.example.blagodari.Models.Message;
 import com.example.blagodari.Models.User;
-
+/**
+ * Экран, на котором отображается профиль отдного из пользователей.
+ * Попасть сюда можно нажав на аватарку полтзователя, которая находится на каждой карточке.
+ * Здесь пожно поблагодарить пользователя или пожаловаться на него.
+ * */
 public class AnotherUserAccount extends AppCompatActivity {
     ImageView avatar, like;
     ImageButton back;

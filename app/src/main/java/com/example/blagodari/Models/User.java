@@ -6,7 +6,10 @@ import android.graphics.Matrix;
 import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
-
+/**
+ * Модель пользователя.
+ * Состоит из id, имени, фамилии, почты, пароля и аватарки.
+ * */
 public class User {
     private int id;
     private String firstName;

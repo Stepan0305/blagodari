@@ -13,7 +13,9 @@ import android.widget.Toast;
 
 
 import com.example.blagodari.Models.DBhelper;
-
+/**
+ * Экран для входа в свой аккаунт.
+ * */
 public class LoginActivity extends AppCompatActivity {
     TextView email, password;
     @Override

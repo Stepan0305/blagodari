@@ -6,7 +6,10 @@ import android.graphics.Matrix;
 import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
-
+/**
+ * Модель новости.
+ * Состоит из id, заголовка, текста, фото и времени создания.
+ * */
 public class News {
     private int id;
     private String title;

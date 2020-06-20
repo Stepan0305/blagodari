@@ -17,7 +17,9 @@ import com.example.blagodari.Models.DBhelper;
 import com.example.blagodari.Models.User;
 
 import java.util.Objects;
-
+/**
+ * Фрагмент, на котором отображается профиль пользователя.
+ * */
 public class UserProfileFragment extends Fragment {
     ImageView avatar;
     TextView name, likes;

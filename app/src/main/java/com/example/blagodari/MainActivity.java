@@ -14,7 +14,9 @@ import android.widget.Toast;
 
 import com.example.blagodari.Models.DBhelper;
 import com.example.blagodari.Models.User;
-
+/**
+ * Экран для регистрации аккаунта.
+ * */
 public class MainActivity extends AppCompatActivity {
     TextView name, surname, email, password;
 

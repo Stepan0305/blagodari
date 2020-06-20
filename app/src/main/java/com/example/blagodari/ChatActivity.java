@@ -26,7 +26,10 @@ import com.example.blagodari.Models.User;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Экран, на котором идет переписка с пользователем.
+ * Здесь отображаются все сообщения чата, а так же, форма для отправления сообщения.
+ * */
 public class ChatActivity extends AppCompatActivity {
     ImageButton back, refresh, send;
     TextView name;

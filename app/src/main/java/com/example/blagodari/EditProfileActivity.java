@@ -24,7 +24,9 @@ import com.example.blagodari.Models.DBhelper;
 import com.example.blagodari.Models.User;
 
 import java.io.IOException;
-
+/**
+ * Экран для редактирования профиля пользователем.
+ * */
 public class EditProfileActivity extends AppCompatActivity {
     ImageView avatar;
     TextView name, surname, email;

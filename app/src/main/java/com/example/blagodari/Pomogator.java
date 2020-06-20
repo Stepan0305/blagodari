@@ -6,7 +6,9 @@ import android.net.NetworkInfo;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
+/**
+ * Класс, содержащий разные полезные функции, используемые в проекте.
+ * */
 public class Pomogator {
     public static String convertSecondsToString(long time){
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");

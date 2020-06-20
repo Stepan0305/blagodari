@@ -1,5 +1,8 @@
 package com.example.blagodari.Models;
-
+/**
+ * Модель чатов.
+ * Состоит из id и двух пользователей, между которыми идет диалог
+ * */
 public class Chat {
     private int id;
     private User user1;

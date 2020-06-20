@@ -24,7 +24,9 @@ import com.example.blagodari.Models.DBhelper;
 import com.example.blagodari.Models.Request;
 
 import java.util.ArrayList;
-
+/**
+ * Фрагмент, на котором отображаются все запросы.
+ * */
 public class MainScreenFragment extends Fragment {
     RecyclerView recyclerView;
     CardViewToRecyclerAdapterMain recyclerAdapter;

@@ -26,6 +26,9 @@ import com.example.blagodari.Models.Request;
 import com.example.blagodari.Models.User;
 
 import java.io.IOException;
+/**
+ * Экран для редактирования своего запроса.
+ */
 
 public class EditRequestActivity extends AppCompatActivity {
     ImageButton back;

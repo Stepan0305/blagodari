@@ -40,7 +40,11 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.io.File;
 import java.util.ArrayList;
-
+/**
+ * Самый главный экран.
+ * Состоит из 4 фрагментов, кастомного toolbar, левого меню, нижнего меню
+ * Тут происходит больше всего багов ;(
+ * */
 public class MainScreen extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     //создание переменных
     //ImageButton btnSearch;
@@ -71,6 +75,13 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
             finish();
         }
         dBhelper = new DBhelper(this);
+        User user = dBhelper.getCurrentUser();
+        if (user == null) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        }
         Toolbar mActionBar = findViewById(R.id.myActionBar);
         setSupportActionBar(mActionBar);
         mActionBar.getMenu();
@@ -107,6 +118,7 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
+            finish();
         } else {
             header = navigationView.getHeaderView(0);
             nameOnHeader = (TextView) header.findViewById(R.id.txtNameSurnameOnHeader);
@@ -193,7 +205,7 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
                 break;
             case R.id.btnExit:
                 SharedPreferences pref = getSharedPreferences(DBhelper.LOGGED_USER_ID, 0);
-                pref.edit().remove(DBhelper.LOGGED_USER_ID);
+                pref.edit().clear();
                 pref.edit().commit();
                 Intent intent1 = new Intent(this, LoginActivity.class);
                 startActivity(intent1);

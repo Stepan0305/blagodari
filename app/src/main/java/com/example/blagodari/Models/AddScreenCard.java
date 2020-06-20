@@ -1,5 +1,8 @@
 package com.example.blagodari.Models;
-
+/**
+ * Это модель для карточек на экране опций
+ * Её нет в базе данных, она нужна просто для удобства
+ * */
 public class AddScreenCard {
     private int photo;
     private String text;

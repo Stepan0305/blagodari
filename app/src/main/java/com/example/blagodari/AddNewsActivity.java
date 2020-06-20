@@ -28,7 +28,10 @@ import com.example.blagodari.Models.Request;
 import com.example.blagodari.Models.User;
 
 import java.io.IOException;
-
+/**
+ * Экран, на который может попасть только админ.
+ * Служит для добавления новости.
+ * */
 public class AddNewsActivity extends AppCompatActivity {
     EditText title, text;
     ImageButton back;

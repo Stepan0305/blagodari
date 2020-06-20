@@ -16,7 +16,9 @@ import com.example.blagodari.Models.Chat;
 import com.example.blagodari.Models.DBhelper;
 
 import java.util.ArrayList;
-
+/**
+ * Экран, на котором отображаются все чаты одного пользователя
+ * */
 public class AllUserChatsActivity extends AppCompatActivity {
 ImageButton back;
 RecyclerView recyclerView;

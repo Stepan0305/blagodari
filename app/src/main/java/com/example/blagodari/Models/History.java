@@ -1,5 +1,12 @@
 package com.example.blagodari.Models;
-
+/**
+ * Модель истории.
+ * Состоит из id, пользователя, который открыл определенный пост и модели самого поста.
+ * В самом классе History лежит и News, и Request.
+ * На самом деле, при создании объекта этого класса, можно положить либо News, либо Request.
+ * Чтоб отличить News от Request, в коде используются проверки,
+ * А в самой базе данных лежит int eventType, который показывает, какой класс созержит в себе History.
+ * */
 public class History {
     private int id;
     private User user_opened;

@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-
+/**
+ * Экран, который видет пользователь при отсутствии интернета.
+ * */
 public class NoConnection extends AppCompatActivity {
 Button repeat, exit;
     @Override

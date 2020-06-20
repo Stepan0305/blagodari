@@ -16,7 +16,11 @@ import com.example.blagodari.Models.DBhelper;
 import com.example.blagodari.Models.Request;
 
 import java.util.ArrayList;
-
+/**
+ * Здесь отображаются все запросы, выложенные пользователем.
+ * Удалить их можно прям отсюда.
+ * Если же захочется отредактировать запрос, то вас перекинет на EditRequestActivity.
+ * */
 public class EditActivity extends AppCompatActivity {
 ImageButton back;
 RecyclerView recyclerView;

@@ -23,7 +23,10 @@ import com.example.blagodari.Models.Request;
 import com.example.blagodari.Models.User;
 
 import java.io.IOException;
-
+/**
+ * В этом activity принемаются и обрабатываются данные, полученные из MainActivity.
+ * Так же, если пользователь поставил аватарку, она так же добавляется.
+ * */
 public class AddAvatar extends AppCompatActivity {
     ImageView avatar;
     Button signUp;

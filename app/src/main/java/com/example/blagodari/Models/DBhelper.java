@@ -27,12 +27,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
-
+/**
+ * Класс для управления базой данных
+ * Тут находятся все CRUD методы, а также MyJsonTask, служащий для многопоточности.
+ * */
 public class DBhelper {
 
     public static final String LOGGED_USER_ID = "UserLogged"; //для shared preferences
     public static final int ADMIN_ID = 3;
-    private User CurrentUser;
+    private static User CurrentUser;
     Context context;
     public static final String PATH = "https://blagodari.herokuapp.com/";
 
@@ -181,7 +184,7 @@ public class DBhelper {
         SharedPreferences pref = this.context.getSharedPreferences(LOGGED_USER_ID, 0);
         int userid = pref.getInt(LOGGED_USER_ID, -1);
         if (userid != -1) {
-            if (this.CurrentUser == null || this.CurrentUser.getId() != userid) {
+            if (this.CurrentUser == null || this.CurrentUser.getId() != userid) {     //если null или другой пользователь
                 User user = getUserById(userid);
                 this.CurrentUser = user;
             }

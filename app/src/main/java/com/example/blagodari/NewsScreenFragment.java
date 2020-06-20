@@ -19,7 +19,9 @@ import com.example.blagodari.Models.DBhelper;
 import com.example.blagodari.Models.News;
 
 import java.util.ArrayList;
-
+/**
+ * Фрагмент, на котором отображаются все новости.
+ * */
 public class NewsScreenFragment extends Fragment {
     RecyclerView recyclerView;
     CardViewToRecyclerAdapterNews recyclerAdapter;

@@ -6,7 +6,10 @@ import android.graphics.Matrix;
 import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
-
+/**
+ * Модель запроса.
+ * Состоит из id, заголовка, текста, фото, модели создавшего пользователя и времени создания.
+ * */
 public class Request {
     private int id;
     private User user;

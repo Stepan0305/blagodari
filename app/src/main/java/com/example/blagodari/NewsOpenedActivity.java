@@ -14,7 +14,9 @@ import android.widget.TextView;
 
 import com.example.blagodari.Models.DBhelper;
 import com.example.blagodari.Models.News;
-
+/**
+ * Страница с открытой новостью
+ * */
 public class NewsOpenedActivity extends AppCompatActivity {
     TextView text, title, date;
     ImageView photo;

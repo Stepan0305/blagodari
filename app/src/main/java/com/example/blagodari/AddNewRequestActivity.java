@@ -27,7 +27,9 @@ import com.example.blagodari.Models.Request;
 import com.example.blagodari.Models.User;
 
 import java.io.IOException;
-
+/**
+ * Экран, на котором пользователь добавляет свой запрос.
+ * */
 public class AddNewRequestActivity extends AppCompatActivity {
     ImageView photo;
     TextView title, text;
